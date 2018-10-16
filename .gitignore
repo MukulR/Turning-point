@@ -4,4 +4,6 @@ milpitas/bin/*
 milpitas/firmware/*
 dvhs/bin/*
 dvhs/firmware/*
+motor-debugger/bin/*
+motor-debugger/firmware/*
 
