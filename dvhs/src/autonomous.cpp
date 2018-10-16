@@ -20,25 +20,23 @@ void backAuton();
 void noAuton();
 
 void autonomous() {
-	autonSelected = 2;
-	if(autonSelected == 0){
-		pros::lcd::set_text(2, "front red 3 flag running!");
-		frontAuton(true);
-	}
-
-	if (autonSelected == 1){
-		pros::lcd::set_text(2, "front blue 3 flag running!");
-		frontAuton(false);
-	}
-
-	if (autonSelected == 2){
-		pros::lcd::set_text(2, "back auton");
-		backAuton();
-	}
-
-	if (autonSelected == 3){
-		pros::lcd::set_text(2, "no auton");
-		noAuton();
+	switch (autonSelected) {
+		case 0:
+			pros::lcd::set_text(2, "front red 3 flag running!");
+			frontAuton(true /* red alliance */);
+			break;
+		case 1:
+			pros::lcd::set_text(2, "front blue 3 flag running!");
+			frontAuton(false /* blue alliance */);
+			break;
+		case 2:
+			pros::lcd::set_text(2, "back auton");
+			backAuton();
+			break;
+		default:
+			pros::lcd::set_text(2, "no auton");
+			noAuton();
+			break;
 	}
 }
 
