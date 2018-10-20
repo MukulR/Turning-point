@@ -10,8 +10,8 @@ pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 void driveWithOkapi(void* param){
 	Motor left_mtr_f(1, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-	Motor left_mtr_b(3, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
 	Motor right_mtr_f(2, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
+	Motor left_mtr_b(3, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
 	Motor right_mtr_b(4, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
 	
 	left_mtr_f.setVoltageLimit(12000);
@@ -50,7 +50,7 @@ void catapult(void* param){
     while(true){
         if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
             while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-                mtrDefs.catapult_mtr->move(127); // CHANGE BACK TO POSITIVE 127
+                mtrDefs.catapult_mtr->move(127);
             }
             mtrDefs.catapult_mtr->move(0);
         }
@@ -60,7 +60,6 @@ void catapult(void* param){
 
 void intake(void* param){
 	bool intakeStarted = false;
-	bool intakeNotStarted = true;
     while(true){
         if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
 			if(!intakeStarted){
@@ -85,15 +84,15 @@ void brake(void* param){
 	while(true){
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-				mtrDefs.brake_mtr->move(127);
+				mtrDefs.brake_mtr->move(-127);
 			}
 			mtrDefs.brake_mtr->move(0);
 		}
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-				mtrDefs.brake_mtr->move(-127);
+				mtrDefs.brake_mtr->move(127);
 			}
-			mtrDefs.brake_mtr->move(-15);
+			mtrDefs.brake_mtr->move(15);
 		}
 		pros::Task::delay(10);
 	}

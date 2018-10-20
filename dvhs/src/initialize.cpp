@@ -16,8 +16,10 @@ void on_center_button() {
 				break;
 			case 2:
 				pros::lcd::set_text(2, "Back Auton Selected!");
-			case 3:
+				break;
+			default:
 				pros::lcd::set_text(2, "Auton Diasbled!");
+				break;
 		}
 	}
 }
@@ -27,10 +29,6 @@ void on_right_button(){
 	static int numPresses = 0;
 	pressed = !pressed;
 	if (pressed){
-		numPresses++;
-		if(numPresses > 3){
-			numPresses = 0;
-		}
 		switch(numPresses){
 			case 0:
 				pros::lcd::set_text(2, "Red 3 Flag Auton");
@@ -47,6 +45,10 @@ void on_right_button(){
 			case 3:
 				pros::lcd::set_text(2, "Auton Disabled");
 				autonSelected = 3;
+		}
+		numPresses++;
+		if(numPresses > 3){
+			numPresses = 0;
 		}
 	}
 }

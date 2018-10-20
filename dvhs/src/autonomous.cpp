@@ -57,46 +57,47 @@ void frontAuton(bool redAlliance){
 	right_mtr_b.setVoltageLimit(9000);
 	//intake_mtr.move(127);
 	pros::Task::delay(200);
-	drive.moveDistance(44_in); //was 43 made 44
+	drive.moveDistance(40_in);
 	intake_mtr.move(127);
 	drive.moveDistance(2_in);
-	//drive.waitUntilSettled();
 	pros::Task::delay(300);
 
-	//turning to not hit the pole
-	if(redAlliance){
-		drive.turnAngle(15_deg);
-	} else{
-		drive.turnAngle(-1*15_deg);
-	}
-	//move back with ball and preload ball towards fence
-	//drive.moveDistance(-1*47_in);
-	left_mtr_f.move(-127);
-	left_mtr_b.move(-127);
-	right_mtr_f.move(-127);
-	right_mtr_b.move(-127);
+	// turning to not hit the pole
+	// move back with ball and preload ball towards fence
+	left_mtr_f.move(-75);
+	left_mtr_b.move(-75);
+	right_mtr_f.move(-75);
+	right_mtr_b.move(-75);
 	pros::Task::delay(1500);
 	left_mtr_f.move(0);
-	left_mtr_b.move(0);
 	right_mtr_f.move(0);
+	left_mtr_b.move(0);
 	right_mtr_b.move(0);
-	drive.moveDistance(5_in); 
+
+	pros::Task::delay(500);
+	if (redAlliance) {
+		drive.moveDistance(14_in);
+	} else {
+		drive.moveDistance(4_in);
+	}	
+	pros::Task::delay(100);
+
 	//turn to face the flags
 	if (redAlliance){
-		drive.turnAngle(-1*95_deg);
+		drive.turnAngle(-1*90_deg);
 	} else {
-		drive.turnAngle(88_deg);
+		drive.turnAngle(78_deg);
 	}
-	drive.waitUntilSettled();
-	drive.moveDistance(3_in);
-	drive.waitUntilSettled();
+	pros::Task::delay(200);
+	drive.moveDistance(4_in);
+	pros::Task::delay(200);
 	catapult_mtr.move_relative(415, 127);
 	pros::Task::delay(500);
 	intake_mtr.move(0);
 	if (redAlliance) {
-		drive.turnAngle(-1*5_deg);
+		drive.turnAngle(-1*15_deg);
 	} else {
-		drive.turnAngle(5_deg);
+		drive.turnAngle(7_deg);
 	}
 	
 	drive.moveDistance(45_in);
