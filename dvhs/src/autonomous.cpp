@@ -108,13 +108,9 @@ void frontAuton(bool redAlliance){
 
 void backAuton(){
 	Motor catapult_mtr(5, false, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
-	Motor brake_mtr(7, false, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
-	brake_mtr.move(-127);
-	pros::Task::delay(300);
-	brake_mtr.move(-10);
 	pros::Task::delay(12000);
 	catapult_mtr.move(127);
-	pros::Task::delay(400);
+	pros::Task::delay(500);
 	catapult_mtr.move(0);
 }
 

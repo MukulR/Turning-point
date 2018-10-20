@@ -58,17 +58,19 @@ void catapult(void* param){
     } 
 }
 
+
 void intake(void* param){
-	bool intakeStarted = false;
+	static bool intakeStarted = false;
     while(true){
         if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
 			if(!intakeStarted){
-				mtrDefs.intake_mtr->move(127);
+				mtrDefs.intake_mtr->move(127);	
 				intakeStarted = true;
-			} else{
+			} else if(intakeStarted){
 				mtrDefs.intake_mtr->move(0);
 				intakeStarted = false;
 			}
+			pros::Task::delay(300);
 		}
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){	
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
