@@ -86,7 +86,7 @@ void frontAuton(bool redAlliance){
 	if (redAlliance){
 		drive.turnAngle(-1*90_deg);
 	} else {
-		drive.turnAngle(78_deg);
+		drive.turnAngle(83_deg);
 	}
 	pros::Task::delay(200);
 	drive.moveDistance(4_in);
