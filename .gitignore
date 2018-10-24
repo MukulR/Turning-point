@@ -1,9 +1,11 @@
+armijo/bin/*
+armijo/firmware/*
 ceres/bin/*
 ceres/firmware/*
-milpitas/bin/*
-milpitas/firmware/*
 dvhs/bin/*
 dvhs/firmware/*
+milpitas/bin/*
+milpitas/firmware/*
 motor-debugger/bin/*
 motor-debugger/firmware/*
 
