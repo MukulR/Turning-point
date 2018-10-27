@@ -4,20 +4,14 @@
 #include "okapi/api.hpp"
 using namespace okapi;
 
-MotorDefs mtrDefs;
-
 pros::Controller master(pros::E_CONTROLLER_MASTER);
+static MotorDefs *mtr_defs = MotorDefs::getMotorDefs();
 
 void driveWithOkapi(void* param){
-	Motor left_mtr_f(1, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-	Motor right_mtr_f(2, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-	Motor left_mtr_b(3, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-	Motor right_mtr_b(4, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-	
-	left_mtr_f.setVoltageLimit(12000);
-	left_mtr_b.setVoltageLimit(12000);
-	right_mtr_f.setVoltageLimit(12000);
-	right_mtr_b.setVoltageLimit(12000);
+	mtr_defs->left_mtr_f->setVoltageLimit(12000);
+	mtr_defs->left_mtr_b->setVoltageLimit(12000);
+	mtr_defs->right_mtr_f->setVoltageLimit(12000);
+	mtr_defs->right_mtr_b->setVoltageLimit(12000);
 
 	while(true){
 		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -37,36 +31,38 @@ void driveWithOkapi(void* param){
 		if(rightMtrVals < -127){
 			rightMtrVals = -127;
 		}
-		left_mtr_b.move(leftMtrVals);
-		left_mtr_f.move(leftMtrVals);
-		right_mtr_b.move(rightMtrVals);
-		right_mtr_f.move(rightMtrVals);
+		mtr_defs->left_mtr_b->move(leftMtrVals);
+		mtr_defs->left_mtr_f->move(leftMtrVals);
+		mtr_defs->right_mtr_b->move(rightMtrVals);
+		mtr_defs->right_mtr_f->move(rightMtrVals);
 		// The below delay is required for tasks to work in PROS.
 		pros::Task::delay(10);
 	}
 }
 
-void catapult(void* param){
-	/*
-    while(true){
+void catapult_shoot(void* param){
+	while(true){
         if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
             while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-                mtrDefs.catapult_mtr->move(127);
+                mtr_defs->catapult_mtr->move(127);
             }
-            mtrDefs.catapult_mtr->move(0);
+            mtr_defs->catapult_mtr->move(0);
         }
         pros::Task::delay(10);
     }
-	*/
-	pros::ADIDigitalIn bumper('A');
+}
+
+void catapult_load(void* param){
+	pros::ADIDigitalIn bumper('E');
   	while (true) {
-		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){
-			while(!bumper.get_value()){
-				mtrDefs.catapult_mtr->move(127);
-				pros::Task::delay(100);
+		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
+			mtr_defs->catapult_mtr->move(127);
+			while(bumper.get_value()){
+				pros::Task::delay(50);
 			}
+			mtr_defs->catapult_mtr->move(0);
 	  	}
-		pros::delay(10);
+		pros::Task::delay(10);
   	}
 }
 
@@ -76,19 +72,19 @@ void intake(void* param){
     while(true){
         if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
 			if(!intakeStarted){
-				mtrDefs.intake_mtr->move(127);	
+				mtr_defs->intake_mtr->move(127);	
 				intakeStarted = true;
 			} else if(intakeStarted){
-				mtrDefs.intake_mtr->move(0);
+				mtr_defs->intake_mtr->move(0);
 				intakeStarted = false;
 			}
 			pros::Task::delay(300);
 		}
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){	
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-				mtrDefs.intake_mtr->move(-127);
+				mtr_defs->intake_mtr->move(-127);
 			}
-			mtrDefs.intake_mtr->move(0);
+			mtr_defs->intake_mtr->move(0);
 		}
         pros::Task::delay(10);
     }
@@ -98,15 +94,15 @@ void brake(void* param){
 	while(true){
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-				mtrDefs.brake_mtr->move(-127);
+				mtr_defs->brake_mtr->move(-127);
 			}
-			mtrDefs.brake_mtr->move(0);
+			mtr_defs->brake_mtr->move(0);
 		}
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-				mtrDefs.brake_mtr->move(127);
+				mtr_defs->brake_mtr->move(127);
 			}
-			mtrDefs.brake_mtr->move(15);
+			mtr_defs->brake_mtr->move(15);
 		}
 		pros::Task::delay(10);
 	}
@@ -130,7 +126,8 @@ void brake(void* param){
 
 void opcontrol() {
 	pros::Task driveOkapiTask(driveWithOkapi);
-	pros::Task catapultTask(catapult);
+	pros::Task catapultShootTask(catapult_shoot);
+	pros::Task catapultLoadTask(catapult_load);
 	pros::Task intakeTask(intake);
 	pros::Task brakeTask(brake);
 }

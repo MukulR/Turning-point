@@ -47,6 +47,7 @@ void driveWithOkapi(void* param){
 }
 
 void catapult(void* param){
+	/*
     while(true){
         if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
             while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
@@ -55,7 +56,18 @@ void catapult(void* param){
             mtrDefs.catapult_mtr->move(0);
         }
         pros::Task::delay(10);
-    } 
+    }
+	*/
+	pros::ADIDigitalIn bumper('A');
+  	while (true) {
+		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){
+			while(!bumper.get_value()){
+				mtrDefs.catapult_mtr->move(127);
+				pros::Task::delay(100);
+			}
+	  	}
+		pros::delay(10);
+  	}
 }
 
 

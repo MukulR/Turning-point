@@ -1,7 +1,7 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "dvhs",
+        "project_name": "armijo",
         "target": "v5",
         "templates": {
             "kernel": {
