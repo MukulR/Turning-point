@@ -7,18 +7,13 @@ using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 static MotorDefs *mtr_defs = MotorDefs::getMotorDefs();
 
-void driveWithOkapi(void* param){
-	//mtr_defs->left_mtr_f->setVoltageLimit(12000);
-	//mtr_defs->left_mtr_b->setVoltageLimit(12000);
-	//mtr_defs->right_mtr_f->setVoltageLimit(12000);
-	//mtr_defs->right_mtr_b->setVoltageLimit(12000);
-
+void driveTask(void* param){
 	while(true){
 		int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 		float scaledTurn = ((turn * 100) * 0.75) / 100;
-		float leftMtrVals = (forward + scaledTurn); //temp original forward + turn
-		float rightMtrVals = -(scaledTurn - forward); //temp original -(forward - scaled turn)
+		float leftMtrVals = (forward + scaledTurn);
+		float rightMtrVals = -(scaledTurn - forward);
 		if(leftMtrVals > 127){
 			leftMtrVals = 127;
 		}
@@ -40,7 +35,7 @@ void driveWithOkapi(void* param){
 	}
 }
 
-void catapult_shoot(void* param){
+void catapultShootTask(void* param){
 	while(true){
         if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
             while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
@@ -52,7 +47,7 @@ void catapult_shoot(void* param){
     }
 }
 
-void catapult_load(void* param){
+void catapultPrepareToLoadTask(void* param){
 	pros::ADIDigitalIn bumper('E');
   	while (true) {
 		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
@@ -66,8 +61,7 @@ void catapult_load(void* param){
   	}
 }
 
-
-void intake(void* param){
+void intakeTask(void* param){
 	static bool intakeStarted = false;
     while(true){
         if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
@@ -90,24 +84,6 @@ void intake(void* param){
     }
 }       
 
-void brake(void* param){
-	while(true){
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-				mtr_defs->brake_mtr->move(-127);
-			}
-			mtr_defs->brake_mtr->move(0);
-		}
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-				mtr_defs->brake_mtr->move(127);
-			}
-			mtr_defs->brake_mtr->move(15);
-		}
-		pros::Task::delay(10);
-	}
-}
-
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -122,12 +98,9 @@ void brake(void* param){
  * task, not resume it from where it left off.
  */
 //task starter function (called by competition)
-
-
 void opcontrol() {
-	pros::Task driveOkapiTask(driveWithOkapi);
-	pros::Task catapultShootTask(catapult_shoot);
-	pros::Task catapultLoadTask(catapult_load);
-	pros::Task intakeTask(intake);
-	pros::Task brakeTask(brake);
+	pros::Task driveTask(driveTask);
+	pros::Task catapultPrepareToLoadTask(catapultPrepareToLoadTask);
+	pros::Task catapultShootTask(catapultShootTask);
+	pros::Task intakeTask(intakeTask);
 }

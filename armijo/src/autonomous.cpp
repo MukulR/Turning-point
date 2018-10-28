@@ -59,11 +59,13 @@ void frontAuton(bool redAlliance){
 	} else if (mtr_defs->left_mtr_f == NULL) {
 		pros::lcd::set_text(2, "left motor front is NULL!");
 	} else {
-		
-		auto driveTrain = ChassisControllerFactory::create(*(mtr_defs->left_mtr_f), *(mtr_defs->right_mtr_f),
-														*(mtr_defs->right_mtr_b), *(mtr_defs->left_mtr_b), 
-														AbstractMotor::gearset::green, {4_in, 15.5_in});
-		
+		auto driveTrain = ChassisControllerFactory::create(
+							*(mtr_defs->left_mtr_f), 
+							*(mtr_defs->right_mtr_f),
+							*(mtr_defs->right_mtr_b), 
+							*(mtr_defs->left_mtr_b), 
+							AbstractMotor::gearset::green,
+							{4_in, 15.5_in});
 		pros::Task::delay(200);
 		drive(mtr_defs, 127, 1000);
 		mtr_defs->intake_mtr->move(127);
