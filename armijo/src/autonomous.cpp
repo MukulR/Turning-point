@@ -40,6 +40,18 @@ void autonomous() {
 	}
 }
 
+void drive(MotorDefs *mtr_defs, int power, int travelTime){
+	mtr_defs->left_mtr_f->move(power);
+	mtr_defs->left_mtr_b->move(power);
+	mtr_defs->right_mtr_f->move(power);
+	mtr_defs->right_mtr_b->move(power);
+	pros::Task::delay(travelTime);
+	mtr_defs->left_mtr_f->move(0);
+	mtr_defs->right_mtr_f->move(0);
+	mtr_defs->left_mtr_b->move(0);
+	mtr_defs->right_mtr_b->move(0);
+}
+
 void frontAuton(bool redAlliance){
 	MotorDefs *mtr_defs = MotorDefs::getMotorDefs();
 	if (mtr_defs == NULL) {
@@ -47,61 +59,46 @@ void frontAuton(bool redAlliance){
 	} else if (mtr_defs->left_mtr_f == NULL) {
 		pros::lcd::set_text(2, "left motor front is NULL!");
 	} else {
-		auto drive = ChassisControllerFactory::create(*(mtr_defs->left_mtr_f), *(mtr_defs->right_mtr_f),
+		
+		auto driveTrain = ChassisControllerFactory::create(*(mtr_defs->left_mtr_f), *(mtr_defs->right_mtr_f),
 														*(mtr_defs->right_mtr_b), *(mtr_defs->left_mtr_b), 
 														AbstractMotor::gearset::green, {4_in, 15.5_in});
-		mtr_defs->left_mtr_f->setVoltageLimit(9000);
-		mtr_defs->left_mtr_b->setVoltageLimit(9000);
-		mtr_defs->right_mtr_f->setVoltageLimit(9000);
-		mtr_defs->right_mtr_b->setVoltageLimit(9000);
-		//intake_mtr->move(127);
+		
 		pros::Task::delay(200);
-		drive.moveDistance(40_in);
+		drive(mtr_defs, 127, 1000);
 		mtr_defs->intake_mtr->move(127);
-		drive.moveDistance(2_in);
 		pros::Task::delay(300);
-
-		// turning to not hit the pole
 		// move back with ball and preload ball towards fence
-		mtr_defs->left_mtr_f->move(-75);
-		mtr_defs->left_mtr_b->move(-75);
-		mtr_defs->right_mtr_f->move(-75);
-		mtr_defs->right_mtr_b->move(-75);
-		pros::Task::delay(1500);
-		mtr_defs->left_mtr_f->move(0);
-		mtr_defs->right_mtr_f->move(0);
-		mtr_defs->left_mtr_b->move(0);
-		mtr_defs->right_mtr_b->move(0);
-
+		drive(mtr_defs, -127, 1100);
 		pros::Task::delay(500);
 		if (redAlliance) {
-			drive.moveDistance(14_in);
+			driveTrain.moveDistance(14_in);
 		} else {
-			drive.moveDistance(4_in);
+			driveTrain.moveDistance(4_in);
 		}	
 		pros::Task::delay(100);
 
 		//turn to face the flags
 		if (redAlliance){
-			drive.turnAngle(-1*90_deg);
+			driveTrain.turnAngle(-1*90_deg);
+			pros::Task::delay(200);
 		} else {
-			drive.turnAngle(83_deg);
+			driveTrain.turnAngle(84_deg);
 		}
 		pros::Task::delay(200);
-		drive.moveDistance(4_in);
-		pros::Task::delay(200);
+		pros::Task::delay(400);
 		mtr_defs->catapult_mtr->move_relative(415, 127);
 		pros::Task::delay(500);
 		mtr_defs->intake_mtr->move(0);
 		if (redAlliance) {
-			drive.turnAngle(-1*15_deg);
+			driveTrain.turnAngle(-1*15_deg);
 		} else {
-			drive.turnAngle(7_deg);
+			driveTrain.turnAngle(7_deg);
 		}
 		
-		drive.moveDistance(45_in);
+		driveTrain.moveDistance(45_in);
 		pros::Task::delay(300);
-		drive.moveDistance(-1*20_in);
+		driveTrain.moveDistance(-1*20_in);
 	}
 }
 

@@ -8,17 +8,17 @@ pros::Controller master(pros::E_CONTROLLER_MASTER);
 static MotorDefs *mtr_defs = MotorDefs::getMotorDefs();
 
 void driveWithOkapi(void* param){
-	mtr_defs->left_mtr_f->setVoltageLimit(12000);
-	mtr_defs->left_mtr_b->setVoltageLimit(12000);
-	mtr_defs->right_mtr_f->setVoltageLimit(12000);
-	mtr_defs->right_mtr_b->setVoltageLimit(12000);
+	//mtr_defs->left_mtr_f->setVoltageLimit(12000);
+	//mtr_defs->left_mtr_b->setVoltageLimit(12000);
+	//mtr_defs->right_mtr_f->setVoltageLimit(12000);
+	//mtr_defs->right_mtr_b->setVoltageLimit(12000);
 
 	while(true){
-		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-		int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+		int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 		float scaledTurn = ((turn * 100) * 0.75) / 100;
 		float leftMtrVals = (forward + scaledTurn); //temp original forward + turn
-		float rightMtrVals = -(forward - scaledTurn); //temp original -(forward - scaled turn)
+		float rightMtrVals = -(scaledTurn - forward); //temp original -(forward - scaled turn)
 		if(leftMtrVals > 127){
 			leftMtrVals = 127;
 		}

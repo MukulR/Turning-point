@@ -12,7 +12,7 @@ MotorDefs::MotorDefs() {
     right_mtr_b = new Motor(4, true /* Reversed */, AbstractMotor::gearset::green);
 
     catapult_mtr = new Motor(5, false /* Not Reversed */, AbstractMotor::gearset::red);
-    intake_mtr = new Motor(6, false /* Not Reversed */, AbstractMotor::gearset::green);
+    intake_mtr = new Motor(6, false /* Not Reversed */, AbstractMotor::gearset::blue);
 }
 
 MotorDefs::~MotorDefs() {
