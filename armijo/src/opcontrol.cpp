@@ -9,11 +9,6 @@ MotorDefs mtrDefs;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 void driveWithOkapi(void* param){
-	Motor left_mtr_f(1, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-	Motor right_mtr_f(2, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-	Motor left_mtr_b(3, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-	Motor right_mtr_b(4, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-	
 	while(true){
 		int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
@@ -32,10 +27,10 @@ void driveWithOkapi(void* param){
 		if(rightMtrVals < -127){
 			rightMtrVals = -127;
 		}
-		left_mtr_b.move(leftMtrVals);
-		left_mtr_f.move(leftMtrVals);
-		right_mtr_b.move(rightMtrVals);
-		right_mtr_f.move(rightMtrVals);
+		mtrDefs.left_mtr_b->move(leftMtrVals);
+		mtrDefs.left_mtr_f->move(leftMtrVals);
+		mtrDefs.right_mtr_b->move(rightMtrVals);
+		mtrDefs.right_mtr_f->move(rightMtrVals);
 		// The below delay is required for tasks to work in PROS.
 		pros::Task::delay(10);
 	}
