@@ -29,8 +29,10 @@ void driveWithOkapi(void* param){
 		}
 		mtrDefs.left_mtr_b->move(leftMtrVals);
 		mtrDefs.left_mtr_f->move(leftMtrVals);
+		mtrDefs.left_mtr_m->move(leftMtrVals);
 		mtrDefs.right_mtr_b->move(rightMtrVals);
 		mtrDefs.right_mtr_f->move(rightMtrVals);
+		mtrDefs.right_mtr_m->move(rightMtrVals);
 		// The below delay is required for tasks to work in PROS.
 		pros::Task::delay(10);
 	}

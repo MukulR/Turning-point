@@ -13,8 +13,10 @@ class MotorDefs {
     public:
         Motor *left_mtr_f;
         Motor *left_mtr_b;
+        Motor *left_mtr_m;
         Motor *right_mtr_f;
         Motor *right_mtr_b;
+        Motor *right_mtr_m;
         Motor *catapult_mtr;
         Motor *intake_mtr;
 
