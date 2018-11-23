@@ -1,12 +1,55 @@
 #include "main.h"
+#include "motordefs.hpp"
+#include "autonselection.h"
 
+int autonSelected;
 void on_center_button() {
 	static bool pressed = false;
 	pressed = !pressed;
 	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
+		switch (autonSelected){
+			case 0:
+				pros::lcd::set_text(2, "Red 3 Flag Selected!");
+				break;
+			case 1:
+				pros::lcd::set_text(2, "Blue 3 Flag Selected!");
+				break;
+			case 2:
+				pros::lcd::set_text(2, "Back Auton Selected!");
+				break;
+			default:
+				pros::lcd::set_text(2, "Auton Diasbled!");
+				break;
+		}
+	}
+}
+
+void on_right_button(){
+	static bool pressed = false;
+	static int numPresses = 0;
+	pressed = !pressed;
+	if (pressed){
+		switch(numPresses){
+			case 0:
+				pros::lcd::set_text(2, "Red 3 Flag Auton");
+				autonSelected = 0;
+				break;
+			case 1: 
+				pros::lcd::set_text(2, "Blue 3 Flag Auton");
+				autonSelected = 1;
+				break;
+			case 2:
+				pros::lcd::set_text(2, "Back Auton");
+				autonSelected = 2;
+				break;
+			case 3:
+				pros::lcd::set_text(2, "Auton Disabled");
+				autonSelected = 3;
+		}
+		numPresses++;
+		if(numPresses > 3){
+			numPresses = 0;
+		}
 	}
 }
 
@@ -18,9 +61,7 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
-	pros::lcd::register_btn1_cb(on_center_button);
+	pros::lcd::set_text(1, "315R Paradigm          Connect to Comp Switch to choose auton!");
 }
 
 /**
@@ -39,4 +80,12 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	pros::lcd::set_text(1, "Right Button For Auton Options");
+	pros::lcd::set_text(2, "Center Button For Auton Selection");
+
+	// Register functions for right button press and center button press
+	pros::lcd::register_btn1_cb(on_center_button);
+	pros::lcd::register_btn2_cb(on_right_button);
+}
+
