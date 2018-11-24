@@ -5,6 +5,7 @@
 
 using namespace okapi;
 
+const float TURN_SCALE_FACTOR = 4.1;
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -71,13 +72,29 @@ void driveRobot(MotorDefs *mtrDefs, int power, int travelTime){
 	mtrDefs->left_mtr_m->move(0);
 }
 
-void setVoltageLimit(MotorDefs *mtrDefs, int voltageLimit) {
-	mtrDefs->left_mtr_b->setVoltageLimit(voltageLimit);
-	mtrDefs->left_mtr_f->setVoltageLimit(voltageLimit);
-	mtrDefs->right_mtr_f->setVoltageLimit(voltageLimit);
-	mtrDefs->right_mtr_b->setVoltageLimit(voltageLimit);
-	mtrDefs->right_mtr_m->setVoltageLimit(voltageLimit);
-	mtrDefs->left_mtr_m->setVoltageLimit(voltageLimit);
+void turnDegrees(MotorDefs *mtrDefs, int degrees, bool left){
+	if(left){
+		mtrDefs->left_mtr_f->move(-65);
+		mtrDefs->left_mtr_b->move(-65);
+		mtrDefs->left_mtr_m->move(-65);
+		mtrDefs->right_mtr_f->move(65);
+		mtrDefs->right_mtr_b->move(65);
+		mtrDefs->right_mtr_m->move(65);
+	} else {
+		mtrDefs->left_mtr_f->move(65);
+		mtrDefs->left_mtr_b->move(65);
+		mtrDefs->left_mtr_m->move(65);
+		mtrDefs->right_mtr_f->move(-65);
+		mtrDefs->right_mtr_b->move(-65);
+		mtrDefs->right_mtr_m->move(-65);
+	}
+	pros::Task::delay(TURN_SCALE_FACTOR * degrees);
+	mtrDefs->left_mtr_b->move(0);
+	mtrDefs->left_mtr_f->move(0);
+	mtrDefs->left_mtr_m->move(0);
+	mtrDefs->right_mtr_f->move(0);
+	mtrDefs->right_mtr_b->move(0);
+	mtrDefs->right_mtr_m->move(0);
 }
 
 void pickupAnotherBallAndComeBack(MotorDefs *mtrDefs){
@@ -89,159 +106,93 @@ void pickupAnotherBallAndComeBack(MotorDefs *mtrDefs){
 	driveRobot(mtrDefs, -80, 1300);
 }
 
-void alignAndShoot(ChassisControllerIntegrated *drive, MotorDefs *mtrDefs, bool redAlliance){
+void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(500);
 	if(redAlliance == true){
-		driveRobot(mtrDefs, 70, 325);
+		driveRobot(mtrDefs, 70, 275);
 	} else {
 		driveRobot(mtrDefs, 70, 100);
 	}
-
-	pros::Task::delay(800);
-	//turn to face the flags
-	setVoltageLimit(mtrDefs, 8000);
-	if (redAlliance){
-		drive->turnAngle(-1*85_deg);
-		pros::Task::delay(200);
-	} else {
-		drive->turnAngle(81_deg);
-	}
-	setVoltageLimit(mtrDefs, 12000);
-	pros::Task::delay(400);
-	mtrDefs->catapult_mtr->move_relative(415, 127);
 	pros::Task::delay(500);
+	//turn to face flags
+	if(redAlliance){
+		turnDegrees(mtrDefs, 84, true /* turn left */);
+	} else {
+		turnDegrees(mtrDefs, 90, false /* turn right */);
+	}
+	pros::Task::delay(1000);
+	mtrDefs->catapult_mtr->move_relative(415, 127);
 	mtrDefs->intake_mtr->move(0);
 }
 
-void flipBottomFlagAndFaceCap(ChassisControllerIntegrated *drive, MotorDefs *mtrDefs, bool redAlliance){
+void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 	if (redAlliance) {
-		drive->turnAngle(-1*12_deg);
-	} 
-	driveRobot(mtrDefs, 100, 1500);//drive.moveDistance(45_in);
+		turnDegrees(mtrDefs, 15, true /* turn left */);
+	} else {
+		turnDegrees(mtrDefs, 2, false /* turn right */);
+	}
+	driveRobot(mtrDefs, 100, 1000);
 	pros::Task::delay(300);
-	drive->moveDistance(-1*25_in);
-	setVoltageLimit(mtrDefs, 8000); 
+	driveRobot(mtrDefs, -100, 750);
 	pros::Task::delay(200);
+	
 	if (redAlliance) {
-		drive->turnAngle(90_deg);
+		turnDegrees(mtrDefs, 83, false /* turn right */);
 	} else {
-		drive->turnAngle(-82_deg);
+		turnDegrees(mtrDefs, 82, true /* turn left */);
 	}
+	pros::Task::delay(200);
+	driveRobot(mtrDefs, -100, 750);
+	pros::Task::delay(200);
 }
 
-void flipCap(MotorDefs *mtrDefs){
-	setVoltageLimit(mtrDefs, 12000);
-	mtrDefs->intake_mtr->move(-127); 
-	driveRobot(mtrDefs, 60, 1200);
-	pros::Task::delay(200);
+void flipCap(MotorDefs *mtrDefs, bool redAlliance){
+	mtrDefs->intake_mtr->move(-127);
+	pros::Task::delay(1000); 
+	if(redAlliance){
+		turnDegrees(mtrDefs, 100, true /* turn left */);
+	} else {
+		turnDegrees(mtrDefs, 90, false /* turn right */);
+	}
+	
+	driveRobot(mtrDefs, 60, 1500);
 	mtrDefs->intake_mtr->move(0);
+	pros::Task::delay(200);
+	driveRobot(mtrDefs, -60, 700);
 }
 
-void flipMidLowerFlag(ChassisControllerIntegrated *drive, MotorDefs *mtrDefs, bool redAlliance){
+void flipMidLowerFlag(MotorDefs *mtrDefs, bool redAlliance){
+	driveRobot(mtrDefs, 90, 900);
+	pros::Task::delay(500);
 	if(redAlliance){
-		drive->turnAngle(-55_deg);
+		turnDegrees(mtrDefs, 85, true /* turn left */);
 	} else {
-		drive->turnAngle(55_deg);
+		turnDegrees(mtrDefs, 75, false /* turn right */);
 	}
 	pros::Task::delay(200);
-	driveRobot(mtrDefs, 90, 800);
+	driveRobot(mtrDefs, 100, 1500);
 	pros::Task::delay(200);
-	if(redAlliance){
-		drive->turnAngle(-45_deg);
-	} else {
-		drive->turnAngle(45_deg);
-	}
+	driveRobot(mtrDefs, -100, 450);
+	pros::Task::delay(500);
 }
 
-void parkOnPlatform(ChassisControllerIntegrated *drive, MotorDefs *mtrDefs, bool redAlliance){
+void parkOnPlatform(MotorDefs *mtrDefs, bool redAlliance){
 
 }
+
 
 void frontAuton(MotorDefs *mtrDefs, bool redAlliance, bool park){
-	auto drive = ChassisControllerFactory::create({*mtrDefs->left_mtr_f, *mtrDefs->left_mtr_b, 
-													*mtrDefs->left_mtr_m}, {*mtrDefs->right_mtr_f, 
-													*mtrDefs->right_mtr_m, *mtrDefs->right_mtr_b},
-													AbstractMotor::gearset::green, {4_in, 15.5_in});
-	
 	pickupAnotherBallAndComeBack(mtrDefs);
-	alignAndShoot(&drive, mtrDefs, redAlliance);
-	flipBottomFlagAndFaceCap(&drive, mtrDefs, redAlliance);
-	flipCap(mtrDefs);
+	alignAndShoot(mtrDefs, redAlliance);
+	pros::Task::delay(500);
+	flipBottomFlagAndBackToTile(mtrDefs, redAlliance);
+
 	if (park) {
-		parkOnPlatform(&drive, mtrDefs, redAlliance);
+		parkOnPlatform(mtrDefs, redAlliance);
 	} else {
-		flipMidLowerFlag(&drive, mtrDefs, redAlliance);
+		flipMidLowerFlag(mtrDefs, redAlliance);
+	 	flipCap(mtrDefs, redAlliance);
 	}
-	
-
-	/*
-	pros::Task::delay(200);
-	driveRobot(mtrDefs, 80, 1200);
-	mtrDefs->intake_mtr->move(127);
-	pros::Task::delay(300);
-	// move back with ball and preload ball towards fence
-	driveRobot(mtrDefs, -80, 1300);
-	
-	pros::Task::delay(500);
-	if(redAlliance == true){
-		driveRobot(mtrDefs, 70, 325);
-	} else {
-		driveRobot(mtrDefs, 70, 100);
-	}
-
-	pros::Task::delay(800);
-	//turn to face the flags
-	setVoltageLimit(mtrDefs, 8000);
-	if (redAlliance){
-		drive.turnAngle(-1*85_deg);
-		pros::Task::delay(200);
-	} else {
-		drive.turnAngle(81_deg);
-	}
-	setVoltageLimit(mtrDefs, 12000);
-	pros::Task::delay(400);
-	mtrDefs->catapult_mtr->move_relative(415, 127);
-	pros::Task::delay(500);
-	mtrDefs->intake_mtr->move(0);
-	
-
-	if (redAlliance) {
-		drive.turnAngle(-1*12_deg);
-	} else {
-		//drive.turnAngle(3_deg);
-	}
-	
-	driveRobot(mtrDefs, 100, 1500);//drive.moveDistance(45_in);
-	pros::Task::delay(300);
-	drive.moveDistance(-1*25_in);
-	setVoltageLimit(mtrDefs, 8000); 
-	pros::Task::delay(200);
-	if (redAlliance) {
-		drive.turnAngle(90_deg);
-	} else {
-		drive.turnAngle(-82_deg);
-	}
-	
-	setVoltageLimit(mtrDefs, 12000);
-	mtrDefs->intake_mtr->move(-127); 
-	driveRobot(mtrDefs, 60, 1200);
-	pros::Task::delay(200);
-	mtrDefs->intake_mtr->move(0);
-	
-	if(redAlliance){
-		drive.turnAngle(-55_deg);
-	} else {
-		drive.turnAngle(55_deg);
-	}
-	pros::Task::delay(200);
-	driveRobot(mtrDefs, 90, 800);
-	pros::Task::delay(200);
-	if(redAlliance){
-		drive.turnAngle(-45_deg);
-	} else {
-		drive.turnAngle(45_deg);
-	}
-	*/
 }
 
 
