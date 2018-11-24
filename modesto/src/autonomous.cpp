@@ -103,7 +103,7 @@ void pickupAnotherBallAndComeBack(MotorDefs *mtrDefs){
 	mtrDefs->intake_mtr->move(127);
 	pros::Task::delay(300);
 	// move back with ball and preload ball towards fence
-	driveRobot(mtrDefs, -80, 1300);
+	driveRobot(mtrDefs, -120, 950);
 }
 
 void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
@@ -116,18 +116,18 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(500);
 	//turn to face flags
 	if(redAlliance){
-		turnDegrees(mtrDefs, 84, true /* turn left */);
+		turnDegrees(mtrDefs, 83, true /* turn left */);
 	} else {
 		turnDegrees(mtrDefs, 90, false /* turn right */);
 	}
-	pros::Task::delay(1000);
+	pros::Task::delay(400);
 	mtrDefs->catapult_mtr->move_relative(415, 127);
 	mtrDefs->intake_mtr->move(0);
 }
 
 void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 	if (redAlliance) {
-		turnDegrees(mtrDefs, 15, true /* turn left */);
+		turnDegrees(mtrDefs, 18, true /* turn left */);
 	} else {
 		turnDegrees(mtrDefs, 2, false /* turn right */);
 	}
@@ -148,32 +148,32 @@ void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 
 void flipCap(MotorDefs *mtrDefs, bool redAlliance){
 	mtrDefs->intake_mtr->move(-127);
-	pros::Task::delay(1000); 
+	pros::Task::delay(500); 
 	if(redAlliance){
-		turnDegrees(mtrDefs, 100, true /* turn left */);
+		turnDegrees(mtrDefs, 105, true /* turn left */);
 	} else {
 		turnDegrees(mtrDefs, 90, false /* turn right */);
 	}
 	
-	driveRobot(mtrDefs, 60, 1500);
+	driveRobot(mtrDefs, 100, 1000);
 	mtrDefs->intake_mtr->move(0);
 	pros::Task::delay(200);
 	driveRobot(mtrDefs, -60, 700);
 }
 
 void flipMidLowerFlag(MotorDefs *mtrDefs, bool redAlliance){
-	driveRobot(mtrDefs, 90, 900);
-	pros::Task::delay(500);
+	driveRobot(mtrDefs, 127, 600);
+	pros::Task::delay(100);
 	if(redAlliance){
-		turnDegrees(mtrDefs, 85, true /* turn left */);
+		turnDegrees(mtrDefs, 87, true /* turn left */);
 	} else {
 		turnDegrees(mtrDefs, 75, false /* turn right */);
 	}
-	pros::Task::delay(200);
+	pros::Task::delay(100);
 	driveRobot(mtrDefs, 100, 1500);
-	pros::Task::delay(200);
+	pros::Task::delay(100);
 	driveRobot(mtrDefs, -100, 450);
-	pros::Task::delay(500);
+	pros::Task::delay(100);
 }
 
 void parkOnPlatform(MotorDefs *mtrDefs, bool redAlliance){
