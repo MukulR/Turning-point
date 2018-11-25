@@ -12,19 +12,13 @@ void on_center_button() {
 				pros::lcd::set_text(2, "Red Auton Selected!");
 				break;
 			case 1:
-				pros::lcd::set_text(2, "Red with Park Auton Selected!");
-				break;
-			case 2:
 				pros::lcd::set_text(2, "Blue Auton Selected!");
 				break;
+			case 2:
+				pros::lcd::set_text(2, "Red Back Auton Selected!");
+				break;
 			case 3:
-				pros::lcd::set_text(2, "Blue with Park Auton Selected!");
-				break;
-			case 4:
-				pros::lcd::set_text(2, "Back Auton Selected!");
-				break;
-			case 5:
-				pros::lcd::set_text(2, "Back with Park Auton Selected!");
+				pros::lcd::set_text(2, "Blue Back Auton Selected!");
 				break;
 			default:
 				pros::lcd::set_text(2, "Auton Diasbled!");
@@ -43,33 +37,25 @@ void on_right_button(){
 				pros::lcd::set_text(2, "Red Auton");
 				autonSelected = 0;
 				break;
-			case 1:
-				pros::lcd::set_text(2, "Red With Park Auton");
+			case 1: 
+				pros::lcd::set_text(2, "Blue Auton");
 				autonSelected = 1;
 				break;
-			case 2: 
-				pros::lcd::set_text(2, "Blue Auton");
+			case 2:
+				pros::lcd::set_text(2, "Red Back Auton");
 				autonSelected = 2;
 				break;
-			case 3: 
-				pros::lcd::set_text(2, "Blue With Park Auton");
+			case 3:
+				pros::lcd::set_text(2, "Blue Back Auton");
 				autonSelected = 3;
 				break;
 			case 4:
-				pros::lcd::set_text(2, "Back Auton");
-				autonSelected = 4;
-				break;
-			case 5:
-				pros::lcd::set_text(2, "Back With Park Auton");
-				autonSelected = 5;
-				break;
-			case 6:
 				pros::lcd::set_text(2, "Auton Disabled");
-				autonSelected = 6;
+				autonSelected = 4;
 				break;
 		}
 		numPresses++;
-		if(numPresses > 6){
+		if(numPresses > 4){
 			numPresses = 0;
 		}
 	}
