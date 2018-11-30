@@ -100,14 +100,14 @@ void pickupAnotherBallAndComeBack(MotorDefs *mtrDefs){
 void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(500);
 	if(redAlliance == true){
-		driveRobot(mtrDefs, 70, 275);
+		driveRobot(mtrDefs, 70, 225); //was 275
 	} else {
 		driveRobot(mtrDefs, 70, 100);
 	}
 	pros::Task::delay(500);
 	//turn to face flags
 	if(redAlliance){
-		turnDegrees(mtrDefs, 83, true /* turn left */);
+		turnDegrees(mtrDefs, 85, true /* turn left */); //was 83
 	} else {
 		turnDegrees(mtrDefs, 81, false /* turn right */);
 	}
@@ -147,10 +147,10 @@ void flipCap(MotorDefs *mtrDefs, bool redAlliance){
 		turnDegrees(mtrDefs, 103, false /* turn right */);
 	}
 	
-	driveRobot(mtrDefs, 70, 1300);
+	driveRobot(mtrDefs, 70, 1250); //was 1300
 	mtrDefs->intake_mtr->move(0);
 	pros::Task::delay(200);
-	driveRobot(mtrDefs, -60, 700);
+	driveRobot(mtrDefs, -60, 700);	
 }
 
 void flipMidLowerFlag(MotorDefs *mtrDefs, bool redAlliance){
