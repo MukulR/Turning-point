@@ -10,4 +10,7 @@ modesto/bin/*
 modesto/firmware/*
 motor-debugger/bin/*
 motor-debugger/firmware/*
+skills/bin/*
+skills/firmware/*
+
 
