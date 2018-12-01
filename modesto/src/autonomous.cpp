@@ -119,13 +119,13 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 
 void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 	if (redAlliance) {
-		turnDegrees(mtrDefs, 18, true /* turn left */);
+		turnDegrees(mtrDefs, 15, true /* turn left */);
 	} else {
 		turnDegrees(mtrDefs, 4, false /* turn right */);
 	}
 	driveRobot(mtrDefs, 100, 1000);
 	pros::Task::delay(300);
-	driveRobot(mtrDefs, -100, 750);
+	driveRobot(mtrDefs, -100, 875);
 	pros::Task::delay(200);
 	
 	if (redAlliance) {
@@ -154,18 +154,18 @@ void flipCap(MotorDefs *mtrDefs, bool redAlliance){
 }
 
 void flipMidLowerFlag(MotorDefs *mtrDefs, bool redAlliance){
-	driveRobot(mtrDefs, 127, 600);
+	driveRobot(mtrDefs, 127, 700);
 	pros::Task::delay(100);
 	if(redAlliance){
-		turnDegrees(mtrDefs, 87, true /* turn left */);
+		turnDegrees(mtrDefs, 95, true /* turn left */);
 	} else {
-		turnDegrees(mtrDefs, 87, false /* turn right */);
+		turnDegrees(mtrDefs, 95, false /* turn right */);
 	}
 	pros::Task::delay(100);
 	driveRobot(mtrDefs, 100, 1500);
 	pros::Task::delay(100);
 	if(redAlliance){
-		driveRobot(mtrDefs, -100, 450);
+		driveRobot(mtrDefs, -100, 500);
 	} else {
 		driveRobot(mtrDefs, -100, 375);
 	}
