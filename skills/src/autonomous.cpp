@@ -70,7 +70,7 @@ void pickupAnotherBallAndComeBack(MotorDefs *mtrDefs){
 	mtrDefs->intake_mtr->move(127);
 	pros::Task::delay(300);
 	// move back with ball and preload ball towards fence
-	driveRobot(mtrDefs, -100, 1050);
+	driveRobot(mtrDefs, -100, 950);
 }
 
 void alignAndShoot(MotorDefs *mtrDefs){
@@ -78,11 +78,11 @@ void alignAndShoot(MotorDefs *mtrDefs){
 	driveRobot(mtrDefs, 70, 225);
 	pros::Task::delay(500);
 	//turn to face flags
-	turnDegrees(mtrDefs, 85, true /* turn left */); //was 83
+	turnDegrees(mtrDefs, 83, true /* turn left */);
 	pros::Task::delay(400);
 	mtrDefs->catapult_mtr->move_relative(415, 127);
 	mtrDefs->intake_mtr->move(0);
-	pros::Task::delay(500);
+	pros::Task::delay(3000);
 }
 
 void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs){
@@ -94,7 +94,7 @@ void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs){
 	
 	turnDegrees(mtrDefs, 83, false /* turn right */);
 	pros::Task::delay(200);
-	driveRobot(mtrDefs, -100, 750);
+	driveRobot(mtrDefs, -100, 550);
 	pros::Task::delay(200);
 }
 
@@ -105,13 +105,15 @@ void flipCap(MotorDefs *mtrDefs){
 		
 	driveRobot(mtrDefs, 70, 1250); //was 1300
 	mtrDefs->intake_mtr->move(0);
-	pros::Task::delay(200);
+	pros::Task::delay(1000);
+	driveRobot(mtrDefs, -60, 1225);
+	pros::Task::delay(1000);
 }
 
 void flipMidLowerFlag(MotorDefs *mtrDefs){
 	driveRobot(mtrDefs, 127, 700);
 	pros::Task::delay(100);
-	turnDegrees(mtrDefs, 95, true /* turn left */);
+	turnDegrees(mtrDefs, 93, true /* turn left */);
 	
 	pros::Task::delay(100);
 	driveRobot(mtrDefs, 100, 1500);
@@ -121,19 +123,22 @@ void flipMidLowerFlag(MotorDefs *mtrDefs){
 }
 
 void alignAgainstRedPlatform(MotorDefs *mtrDefs) {
-	pros::Task::delay(500);
-	turnDegrees(mtrDefs, 95, false /*turn right */);
-	pros::Task::delay(100);
-	driveRobot(mtrDefs, -50, 2600);
-	pros::Task::delay(100);
-	turnDegrees(mtrDefs, 90, true /*turn left */);
-	pros::Task::delay(100);
+	turnDegrees(mtrDefs, 60, false /* turn right */);
+	pros::Task::delay(1000);
+	driveRobot(mtrDefs, -60, 775);
+	pros::Task::delay(1000);
+}
 
-	// Move back until back wheels are aligned against red platform
-	driveRobot(mtrDefs, -50, 1000);
+void climbFirstPlatform(MotorDefs *mtrDefs) {
 	// Climb up the platform.
-	driveRobot(mtrDefs, -100, 900);
-	pros::Task::delay(200);
+	driveRobot(mtrDefs, -100, 1000);
+	pros::Task::delay(1000);
+}
+
+void climbSecondPlatform(MotorDefs *mtrDefs) {
+	// Climb up the platform.
+	driveRobot(mtrDefs, -100, 1200);
+	pros::Task::delay(1000);
 }
 
 void frontAuton(MotorDefs *mtrDefs){
@@ -143,4 +148,6 @@ void frontAuton(MotorDefs *mtrDefs){
 	flipMidLowerFlag(mtrDefs);
  	flipCap(mtrDefs);
 	alignAgainstRedPlatform(mtrDefs);
+	climbFirstPlatform(mtrDefs);
+	//climbSecondPlatform(mtrDefs);
 }
