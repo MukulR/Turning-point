@@ -94,7 +94,7 @@ void pickupAnotherBallAndComeBack(MotorDefs *mtrDefs){
 	mtrDefs->intake_mtr->move(127);
 	pros::Task::delay(300);
 	// move back with ball and preload ball towards fence
-	driveRobot(mtrDefs, -100, 1050);
+	driveRobot(mtrDefs, -100, 950);
 }
 
 void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
@@ -107,9 +107,9 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(500);
 	//turn to face flags
 	if(redAlliance){
-		turnDegrees(mtrDefs, 83, true /* turn left */); //was 83
+		turnDegrees(mtrDefs, 83, true /* turn left */);
 	} else {
-		turnDegrees(mtrDefs, 81, false /* turn right */);
+		turnDegrees(mtrDefs, 83, false /* turn right */);
 	}
 	pros::Task::delay(400);
 	mtrDefs->catapult_mtr->move_relative(415, 127);
@@ -119,9 +119,9 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 
 void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 	if (redAlliance) {
-		turnDegrees(mtrDefs, 13, true /* turn left */);
+		turnDegrees(mtrDefs, 15, true /* turn left */);
 	} else {
-		turnDegrees(mtrDefs, 4, false /* turn right */);
+		turnDegrees(mtrDefs, 5, false /* turn right */);
 	}
 	driveRobot(mtrDefs, 100, 1000);
 	pros::Task::delay(300);
@@ -134,7 +134,7 @@ void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 		turnDegrees(mtrDefs, 82, true /* turn left */);
 	}
 	pros::Task::delay(200);
-	driveRobot(mtrDefs, -100, 750);
+	driveRobot(mtrDefs, -100, 550);
 	pros::Task::delay(200);
 }
 
@@ -162,7 +162,7 @@ void flipMidLowerFlag(MotorDefs *mtrDefs, bool redAlliance){
 		turnDegrees(mtrDefs, 93, false /* turn right */);
 	}
 	pros::Task::delay(100);
-	driveRobot(mtrDefs, 100, 1500);
+	driveRobot(mtrDefs, 100, 1300);
 	pros::Task::delay(100);
 	if(redAlliance){
 		driveRobot(mtrDefs, -100, 500);
@@ -236,7 +236,7 @@ void frontAuton(MotorDefs *mtrDefs, bool redAlliance){
 	alignAndShoot(mtrDefs, redAlliance);
 	flipBottomFlagAndBackToTile(mtrDefs, redAlliance);
 	flipMidLowerFlag(mtrDefs, redAlliance);
- 	flipCap(mtrDefs, redAlliance);
+ 	//flipCap(mtrDefs, redAlliance);
 }
 
 
