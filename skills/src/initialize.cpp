@@ -28,5 +28,6 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {
+	pros::lcd::set_text(1, "RED Front Auton");
 }
 
