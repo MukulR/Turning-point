@@ -109,7 +109,7 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	if(redAlliance){
 		turnDegrees(mtrDefs, 83, true /* turn left */);
 	} else {
-		turnDegrees(mtrDefs, 88, false /* turn right */);
+		turnDegrees(mtrDefs, 83, false /* turn right */);
 	}
 	pros::Task::delay(400);
 	mtrDefs->catapult_mtr->move_relative(415, 127);
@@ -188,9 +188,10 @@ void loadBallFromBack(MotorDefs *mtrDefs, bool redAlliance) {
 	if (redAlliance) {
 		turnDegrees(mtrDefs, 52, false /* turn right */);
 	} else {
-		turnDegrees(mtrDefs, 60, true /* turn left */);
+		turnDegrees(mtrDefs, 50, true /* turn left */);
 	}
 	pros::Task::delay(200);
+	driveRobot(mtrDefs, -70, 300);
 
 	// Pick up ball from under the cap and come straight back to hit the fence
 	// to ensure straight alignment.
@@ -212,12 +213,12 @@ void parkOnPlatform(MotorDefs *mtrDefs, bool redAlliance){
 	if (redAlliance) {
 		turnDegrees(mtrDefs, 90, true /* right left */ );
 	} else {
-		turnDegrees(mtrDefs, 90, false /* right turn */ );
+		turnDegrees(mtrDefs, 95, false /* right turn */ );
 	}
 	pros::Task::delay(200);
 
 	//Move forward so that the robot is within platform's range
-	driveRobot(mtrDefs, 70, 800);
+	driveRobot(mtrDefs, 70, 920);
 	pros::Task::delay(200);
 
 	// Turn towards the fence so that back of the robot is facing the platform.

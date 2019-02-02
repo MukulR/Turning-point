@@ -4,6 +4,10 @@ ceres/bin/*
 ceres/firmware/*
 dvhs/bin/*
 dvhs/firmware/*
+gaelforce/bin/*
+gaelforce/firmware/*
+gaelforcePID/bin/*
+gaelforcePID/firmware/*
 milpitas/bin/*
 milpitas/firmware/*
 modesto/bin/*
