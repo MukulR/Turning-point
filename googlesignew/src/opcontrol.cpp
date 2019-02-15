@@ -50,12 +50,12 @@ void catapultShoot(void* param){
     }
 }
 
-void catapultPrepareToLoad(void* param){
+void catapultPrepareToShoot(void* param){
 	pros::ADIAnalogIn line_sensor('E');
   	while (true) {
 		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
 			mtrDefs.catapult_mtr->move(127);
-			while(line_sensor.get_value() > 2890){
+			while(line_sensor.get_value() > 2700){
 				pros::Task::delay(50);
 			}
 			mtrDefs.catapult_mtr->move(0);
@@ -105,7 +105,7 @@ void intake(void* param){
 
 void opcontrol() {
 	pros::Task driveOkapiTask(driveWithOkapi);
-	pros::Task catapultPrepareToLoadTask(catapultPrepareToLoad);
+	pros::Task catapultPrepareToLoadTask(catapultPrepareToShoot);
 	pros::Task catapultShootTask(catapultShoot);
 	pros::Task intakeTask(intake);
 }
