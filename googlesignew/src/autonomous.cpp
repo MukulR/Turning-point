@@ -245,11 +245,10 @@ void loadBallFromBack(MotorDefs *mtrDefs, bool redAlliance) {
 	pros::Task::delay(200);
 	driveRobot(mtrDefs, -70, 300);
 
-	// Pick up ball from under the cap and come straight back to hit the fence
-	// to ensure straight alignment.
-	pickupAnotherBallAndComeBack(mtrDefs);
+	mtrDefs->intake_mtr->move(127);
+	driveRobot(mtrDefs, 80, 1200);
 	pros::Task::delay(200);
-	driveRobot(mtrDefs, -70, 200);
+	driveRobot(mtrDefs, -80, 100);
 	pros::Task::delay(200);
 
 	// Stop intake
@@ -257,37 +256,12 @@ void loadBallFromBack(MotorDefs *mtrDefs, bool redAlliance) {
 }
 
 void parkOnPlatform(MotorDefs *mtrDefs, bool redAlliance){
-	// Move forward a bit so that we can clear the fence in preparation for turning.
-	driveRobot(mtrDefs, 70, 200);
-	pros::Task::delay(200);
-
-	// Turn so that we go in front of the platform.
-	if (redAlliance) {
-		turnDegrees(mtrDefs, 90, true /* right left */ );
-	} else {
-		turnDegrees(mtrDefs, 95, false /* right turn */ );
+	if(redAlliance){
+		turnDegrees(mtrDefs, 90, true);
+	} else{
+		turnDegrees(mtrDefs, 90, false);
 	}
-	pros::Task::delay(200);
-
-	//Move forward so that the robot is within platform's range
-	driveRobot(mtrDefs, 70, 920);
-	pros::Task::delay(200);
-
-	// Turn towards the fence so that back of the robot is facing the platform.
-	if (redAlliance) {
-		turnDegrees(mtrDefs, 97, true /*turn left */);
-	} else {
-		turnDegrees(mtrDefs, 95, false /*turn right */);
-	}
-	pros::Task::delay(200);
-
-	// Move baack until the back wheels are aligned and touching the foot of the platform.
-	driveRobot(mtrDefs, -50, 500);
-	pros::Task::delay(500);
-
-	// Climb up the platform.
-	driveRobot(mtrDefs, -100, 1200);
-	pros::Task::delay(200);
+	driveRobot(mtrDefs, 100, 950);
 }
 
 
@@ -301,7 +275,7 @@ void frontAuton(MotorDefs *mtrDefs, bool redAlliance){
 
 
 void backAuton(MotorDefs *mtrDefs, bool redAlliance){
-	pros::Task::delay(13000);
+	pros::Task::delay(3000);
 	mtrDefs->catapult_mtr->move(127);
 	pros::Task::delay(500);
 	mtrDefs->catapult_mtr->move(0);
@@ -316,8 +290,8 @@ void backAuton(MotorDefs *mtrDefs, bool redAlliance){
 	}
 	mtrDefs->catapult_mtr->move(0);
 
-	//loadBallFromBack(mtrDefs, redAlliance);
-	//parkOnPlatform(mtrDefs, redAlliance);
+	loadBallFromBack(mtrDefs, redAlliance);
+	parkOnPlatform(mtrDefs, redAlliance);
 }
 
 void noAuton(){
