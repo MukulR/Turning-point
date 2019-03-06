@@ -4,14 +4,14 @@
 using namespace okapi;
 
 MotorDefs::MotorDefs() {
-    left_mtr_f = new Motor(1, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
-    right_mtr_f = new Motor(4, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
-    left_mtr_b = new Motor(11, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
-    right_mtr_b = new Motor(2, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
-    right_mtr_m = new Motor(14, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
-    left_mtr_m = new Motor(19, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
-    catapult_mtr = new Motor(5, false, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees); 
-    intake_mtr = new Motor(6, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    left_mtr_f = new Motor(10, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
+    right_mtr_f = new Motor(20, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
+    left_mtr_b = new Motor(5, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
+    right_mtr_b = new Motor(1, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
+    right_mtr_m = new Motor(15, true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
+    left_mtr_m = new Motor(7, false, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees); //default motor color
+    catapult_mtr = new Motor(18, false, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees); 
+    intake_mtr = new Motor(12, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
 }
 
 MotorDefs::~MotorDefs() { 

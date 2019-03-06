@@ -9,7 +9,7 @@ MotorDefs mtrDefs;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 void driveWithOkapi(void* param){
-	while(true){
+	while(true) {
 		int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 		float scaledTurn = ((turn * 100) * 0.75) / 100;
@@ -50,7 +50,7 @@ void catapultShoot(void* param){
     }
 }
 
-void catapultPrepareToLoad(void* param){
+void catapultLoad(void* param){
 	pros::ADIDigitalIn bumper('E');
   	while (true) {
 		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
@@ -105,7 +105,7 @@ void intake(void* param){
 
 void opcontrol() {
 	pros::Task driveOkapiTask(driveWithOkapi);
-	pros::Task catapultPrepareToLoadTask(catapultPrepareToLoad);
+	pros::Task catapultPrepareToLoadTask(catapultLoad);
 	pros::Task catapultShootTask(catapultShoot);
 	pros::Task intakeTask(intake);
 }
