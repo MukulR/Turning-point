@@ -63,6 +63,7 @@ void driveRobot(MotorDefs *mtrDefs, int power, int travelTime){
 	mtrDefs->right_mtr_m->move(-15);
 	mtrDefs->left_mtr_m->move(-15);
 	//stop motors (set to 0)
+	pros::Task::delay(50);
 	mtrDefs->left_mtr_f->move(0);
 	mtrDefs->right_mtr_f->move(0);
 	mtrDefs->left_mtr_b->move(0);
@@ -124,11 +125,13 @@ void turnDegrees(MotorDefs *mtrDefs, int degrees, bool left){
 
 void pickupAnotherBallAndComeBack(MotorDefs *mtrDefs){
 	pros::Task::delay(200);
-	driveRobot(mtrDefs, 80, 1200);
+	driveRobot(mtrDefs, 40, 100);
+	driveRobot(mtrDefs, 80, 1100);
 	mtrDefs->intake_mtr->move(127);
 	pros::Task::delay(300);
 	// move back with ball and preload ball towards fence
-	driveRobot(mtrDefs, -100, 1150);
+	driveRobot(mtrDefs, -100, 850);
+	driveRobot(mtrDefs, -50, 800);
 }
 
 void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
@@ -136,21 +139,21 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	if(redAlliance == true){
 		driveRobot(mtrDefs, 70, 150);
 	} else {
-		driveRobot(mtrDefs, 70, 100);
+		driveRobot(mtrDefs, 70, 70);
 	}
 	pros::Task::delay(500);
 	//turn to face flags
 	if(redAlliance){
-		turnDegrees(mtrDefs, 90, true /* turn left */);
+		turnDegrees(mtrDefs, 86, true /* turn left */);
 		pros::Task::delay(500);
 		driveRobot(mtrDefs, 50, 200);
 	} else {
-		turnDegrees(mtrDefs, 80, false /* turn right */);
+		turnDegrees(mtrDefs, 77, false /* turn right */);
 		pros::Task::delay(500);
-		driveRobot(mtrDefs, 50, 100);
+		driveRobot(mtrDefs, 50, 200);
 	}
 	pros::Task::delay(400);
-	mtrDefs->catapult_mtr->move_relative(500, 127);
+	mtrDefs->catapult_mtr->move_relative(1000, 127);
 	pros::Task::delay(500);
 	pros::ADIDigitalIn bumper('E');
 	mtrDefs->catapult_mtr->move(127);
@@ -158,18 +161,18 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 		pros::Task::delay(50);
 	}
 	mtrDefs->catapult_mtr->move(0);
+	mtrDefs->intake_mtr->move(127);
 }
 
 void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 	if (redAlliance) {
-		turnDegrees(mtrDefs, 17, true /* turn left */); //was15
+		turnDegrees(mtrDefs, 12, true /* turn left */); //was15
 	} else {
 		turnDegrees(mtrDefs, 3, false /* turn right */);
 	}
-	driveRobot(mtrDefs, 100, 950);
-	pros::Task::delay(300);
-	driveRobot(mtrDefs, -100, 450);
+	driveRobot(mtrDefs, 110, 900);
 	pros::Task::delay(200);
+	driveRobot(mtrDefs, -70, 900);
 	
 	if (redAlliance) {
 		turnDegrees(mtrDefs, 83, false /* turn right */);
@@ -177,14 +180,14 @@ void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 		turnDegrees(mtrDefs, 82, true /* turn left */);
 	}
 	pros::Task::delay(200);
-	driveRobot(mtrDefs, -100, 500);
+	driveRobot(mtrDefs, -50, 500);
 	pros::Task::delay(200);
 }
 
 void flipCap(MotorDefs *mtrDefs){
 	mtrDefs->intake_mtr->move(0);
 	mtrDefs->intake_mtr->move(-100);
-	driveRobot(mtrDefs, 50, 1600);
+	driveRobot(mtrDefs, 45, 2050);
 	mtrDefs->intake_mtr->move(0);
 	driveRobot(mtrDefs, 50, 200);
 }
@@ -193,18 +196,23 @@ void alignToMidAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	if(redAlliance){
 		turnDegrees(mtrDefs, 60, true);
 	} else{
-		turnDegrees(mtrDefs, 45, false);
+		turnDegrees(mtrDefs, 60, false);
 	}
+	driveRobot(mtrDefs, -50, 300);
+	pros::Task::delay(1000);
 	mtrDefs->catapult_mtr->move_relative(500, 127);
-	pros::Task::delay(500);
-	pros::ADIDigitalIn bumper('E');
-	mtrDefs->catapult_mtr->move(127);
-	while(bumper.get_value()){
-		pros::Task::delay(50);
-	}
-	mtrDefs->catapult_mtr->move(0);
 }
 
+void midLowerFlag(MotorDefs *mtrDefs, bool redAlliance){
+	if(redAlliance){
+		turnDegrees(mtrDefs, 20, true);
+	} else{
+		turnDegrees(mtrDefs, 16, false);
+	}	
+	driveRobot(mtrDefs, 127, 1300);
+	driveRobot(mtrDefs, -75, 100);
+	driveRobot(mtrDefs, 75, 400);
+}
 
 void loadBallFromBack(MotorDefs *mtrDefs, bool redAlliance) {
 	// Move forward so that we clear the fence
@@ -221,7 +229,7 @@ void loadBallFromBack(MotorDefs *mtrDefs, bool redAlliance) {
 	driveRobot(mtrDefs, -70, 300);
 
 	mtrDefs->intake_mtr->move(127);
-	driveRobot(mtrDefs, 80, 1200);
+	driveRobot(mtrDefs, 80, 1150);
 	pros::Task::delay(200);
 	driveRobot(mtrDefs, -80, 100);
 	pros::Task::delay(200);
@@ -231,12 +239,14 @@ void loadBallFromBack(MotorDefs *mtrDefs, bool redAlliance) {
 }
 
 void parkOnPlatform(MotorDefs *mtrDefs, bool redAlliance){
-	if(redAlliance){
-		turnDegrees(mtrDefs, 90, true);
-	} else{
-		turnDegrees(mtrDefs, 90, false);
-	}
-	driveRobot(mtrDefs, 100, 950);
+	driveRobot(mtrDefs, -50, 1500);
+	turnDegrees(mtrDefs, 45, true);
+	driveRobot(mtrDefs, -50, 800);
+	turnDegrees(mtrDefs, 90, false);
+	driveRobot(mtrDefs, -50, 1500);
+	pros::Task::delay(200);
+	driveRobot(mtrDefs, 127, 2500);
+
 }
 
 
@@ -246,6 +256,9 @@ void frontAuton(MotorDefs *mtrDefs, bool redAlliance){
 	flipBottomFlagAndBackToTile(mtrDefs, redAlliance);
  	flipCap(mtrDefs);
 	alignToMidAndShoot(mtrDefs, redAlliance);
+	parkOnPlatform(mtrDefs, redAlliance);
+	//midLowerFlag(mtrDefs, redAlliance)
+
 }
 
 
