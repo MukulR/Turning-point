@@ -63,6 +63,7 @@ void driveRobot(MotorDefs *mtrDefs, int power, int travelTime){
 	mtrDefs->right_mtr_m->move(-15);
 	mtrDefs->left_mtr_m->move(-15);
 	//stop motors (set to 0)
+	pros::Task::delay(50);
 	mtrDefs->left_mtr_f->move(0);
 	mtrDefs->right_mtr_f->move(0);
 	mtrDefs->left_mtr_b->move(0);
