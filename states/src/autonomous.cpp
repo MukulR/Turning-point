@@ -238,14 +238,21 @@ void loadBallFromBack(MotorDefs *mtrDefs, bool redAlliance) {
 	// turn to face the pick up ball under the cap
 	if (redAlliance) {
 		turnDegrees(mtrDefs, 52, false /* turn right */);
+		pros::Task::delay(100);
+		driveRobot(mtrDefs, -70, 900);
 	} else {
 		turnDegrees(mtrDefs, 50, true /* turn left */);
+		driveRobot(mtrDefs, 50, 200);
+		turnDegrees(mtrDefs, 30, true);
 	}
 	pros::Task::delay(200);
-	driveRobot(mtrDefs, -70, 300);
 
 	mtrDefs->intake_mtr->move(127);
-	driveRobot(mtrDefs, 80, 1400);
+	if(redAlliance){
+		driveRobot(mtrDefs, 80, 1400);
+	} else{
+		driveRobot(mtrDefs, 80, 1100);
+	}
 	pros::Task::delay(200);
 	driveRobot(mtrDefs, -80, 100);
 	pros::Task::delay(200);
