@@ -72,6 +72,22 @@ void driveRobot(MotorDefs *mtrDefs, int power, int travelTime){
 	mtrDefs->left_mtr_m->move(0);
 }
 
+int driveWithCoast(MotorDefs *mtrDefs, int power, int duration){
+	mtrDefs->left_mtr_f->move(power);
+	mtrDefs->left_mtr_b->move(power);
+	mtrDefs->right_mtr_f->move(power);
+	mtrDefs->right_mtr_b->move(power);
+	mtrDefs->right_mtr_m->move(power);
+	mtrDefs->left_mtr_m->move(power);
+	pros::Task::delay(duration);
+	mtrDefs->left_mtr_f->move(0);
+	mtrDefs->right_mtr_f->move(0);
+	mtrDefs->left_mtr_b->move(0);
+	mtrDefs->right_mtr_b->move(0);
+	mtrDefs->right_mtr_m->move(0);
+	mtrDefs->left_mtr_m->move(0);
+}
+
 void turnDegrees(MotorDefs *mtrDefs, int degrees, bool left){
 	if(left){
 		mtrDefs->left_mtr_f->move(-65);
@@ -125,12 +141,13 @@ void turnDegrees(MotorDefs *mtrDefs, int degrees, bool left){
 
 void pickupAnotherBallAndComeBack(MotorDefs *mtrDefs){
 	pros::Task::delay(200);
-	driveRobot(mtrDefs, 127, 700);
+	driveWithCoast(mtrDefs, 50, 200);
+	driveRobot(mtrDefs, 127, 650);
 	mtrDefs->intake_mtr->move(127);
 	pros::Task::delay(300);
 	// move back with ball and preload ball towards fence
 	driveRobot(mtrDefs, -100, 850);
-	driveRobot(mtrDefs, -50, 800);
+	driveRobot(mtrDefs, -50, 900);
 }
 
 void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
@@ -149,7 +166,7 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	} else {
 		turnDegrees(mtrDefs, 77, false /* turn right */);
 		pros::Task::delay(500);
-		driveRobot(mtrDefs, 50, 200);
+		driveRobot(mtrDefs, 50, 350);
 	}
 	pros::Task::delay(300);
 	mtrDefs->catapult_mtr->move_relative(1000, 127);
@@ -167,16 +184,16 @@ void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 	if (redAlliance) {
 		turnDegrees(mtrDefs, 15, true /* turn left */); //was15
 	} else {
-		turnDegrees(mtrDefs, 5, false /* turn right */);
+		turnDegrees(mtrDefs, 3, false /* turn right */);
 	}
-	driveRobot(mtrDefs, 110, 900);
+	driveRobot(mtrDefs, 110, 910);
 	pros::Task::delay(200);
 	driveRobot(mtrDefs, -70, 900);
 	
 	if (redAlliance) {
 		turnDegrees(mtrDefs, 83, false /* turn right */);
 	} else {
-		turnDegrees(mtrDefs, 82, true /* turn left */);
+		turnDegrees(mtrDefs, 90, true /* turn left */);
 	}
 	pros::Task::delay(200);
 	driveRobot(mtrDefs, -50, 500);
