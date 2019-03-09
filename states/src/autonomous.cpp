@@ -182,7 +182,7 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 
 void flipBottomFlagAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 	if (redAlliance) {
-		turnDegrees(mtrDefs, 15, true /* turn left */); //was15
+		turnDegrees(mtrDefs, 17, true /* turn left */); //was15
 	} else {
 		turnDegrees(mtrDefs, 3, false /* turn right */);
 	}
