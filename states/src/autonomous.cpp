@@ -245,7 +245,7 @@ void loadBallFromBack(MotorDefs *mtrDefs, bool redAlliance) {
 	driveRobot(mtrDefs, -70, 300);
 
 	mtrDefs->intake_mtr->move(127);
-	driveRobot(mtrDefs, 80, 1150);
+	driveRobot(mtrDefs, 80, 1400);
 	pros::Task::delay(200);
 	driveRobot(mtrDefs, -80, 100);
 	pros::Task::delay(200);
@@ -260,7 +260,7 @@ void parkOnPlatform(MotorDefs *mtrDefs, bool redAlliance){
 	} else{
 		turnDegrees(mtrDefs, 90, false);
 	}
-	driveRobot(mtrDefs, 100, 950);
+	driveRobot(mtrDefs, 100, 1100);
 }
 
 
