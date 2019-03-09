@@ -8,6 +8,8 @@ MotorDefs mtrDefs;
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
+bool braked = false;
+
 void driveWithOkapi(void* param){
 	while(true) {
 		int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -27,12 +29,14 @@ void driveWithOkapi(void* param){
 		if(rightMtrVals < -127){
 			rightMtrVals = -127;
 		}
-		mtrDefs.left_mtr_b->move(leftMtrVals);
-		mtrDefs.left_mtr_f->move(leftMtrVals);
-		mtrDefs.left_mtr_m->move(leftMtrVals);
-		mtrDefs.right_mtr_b->move(rightMtrVals);
-		mtrDefs.right_mtr_f->move(rightMtrVals);
-		mtrDefs.right_mtr_m->move(rightMtrVals);
+		if(!braked){
+			mtrDefs.left_mtr_b->move(leftMtrVals);
+			mtrDefs.left_mtr_f->move(leftMtrVals);
+			mtrDefs.left_mtr_m->move(leftMtrVals);
+			mtrDefs.right_mtr_b->move(rightMtrVals);
+			mtrDefs.right_mtr_f->move(rightMtrVals);
+			mtrDefs.right_mtr_m->move(rightMtrVals);
+		}
 		// The below delay is required for tasks to work in PROS.
 		pros::Task::delay(10);
 	}
@@ -85,7 +89,25 @@ void intake(void* param){
 		}
         pros::Task::delay(10);
     }
-}       
+}
+
+void brake(void* param){
+	while(true){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+			braked = true;
+			mtrDefs.right_mtr_f->move_relative(0, 200);
+			mtrDefs.right_mtr_m->move_relative(0, 200);
+			mtrDefs.right_mtr_b->move_relative(0, 200);
+			mtrDefs.left_mtr_f->move_relative(0, 200);
+			mtrDefs.left_mtr_m->move_relative(0, 200);
+			mtrDefs.left_mtr_b->move_relative(0, 200);
+		}
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
+			braked = false;
+		}
+		pros::Task::delay(10);
+	}
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -108,4 +130,5 @@ void opcontrol() {
 	pros::Task catapultPrepareToLoadTask(catapultLoad);
 	pros::Task catapultShootTask(catapultShoot);
 	pros::Task intakeTask(intake);
+	pros::Task brakeTask(brake);
 }
