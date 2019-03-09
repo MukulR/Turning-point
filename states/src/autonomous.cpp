@@ -72,7 +72,7 @@ void driveRobot(MotorDefs *mtrDefs, int power, int travelTime){
 	mtrDefs->left_mtr_m->move(0);
 }
 
-int driveWithCoast(MotorDefs *mtrDefs, int power, int duration){
+void driveWithCoast(MotorDefs *mtrDefs, int power, int duration){
 	mtrDefs->left_mtr_f->move(power);
 	mtrDefs->left_mtr_b->move(power);
 	mtrDefs->right_mtr_f->move(power);
