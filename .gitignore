@@ -20,3 +20,5 @@ skills/bin/*
 skills/firmware/*
 states/bin/*
 states/firmware/*
+usopen/bin/*
+usopen/firmware/*

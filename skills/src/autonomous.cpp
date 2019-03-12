@@ -120,7 +120,7 @@ void turnDegrees(MotorDefs *mtrDefs, int degrees, bool left){
 void pickupAnotherBallAndComeBack(MotorDefs *mtrDefs){
 	pros::Task::delay(200);
 	driveWithCoast(mtrDefs, 50, 200);
-	driveRobot(mtrDefs, 127, 650);
+	driveRobot(mtrDefs, 80, 1100);
 	mtrDefs->intake_mtr->move(127);
 	pros::Task::delay(300);
 	// move back with ball and preload ball towards fence
@@ -192,7 +192,7 @@ void alignToMidAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	} else{
 		turnDegrees(mtrDefs, 60, false);
 	}
-	driveRobot(mtrDefs, -50, 300);
+	driveRobot(mtrDefs, -50, 200);
 	pros::Task::delay(100);
 	mtrDefs->catapult_mtr->move_relative(500, 127);
 }
@@ -236,7 +236,7 @@ void parkOnPlatform(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(1000);
 	driveRobot(mtrDefs, -50, 1500);
 	turnDegrees(mtrDefs, 45, true);
-	driveRobot(mtrDefs, -50, 900);
+	driveRobot(mtrDefs, -50, 935);
 	turnDegrees(mtrDefs, 90, false);
 	driveRobot(mtrDefs, -50, 1500);
 	pros::Task::delay(200);

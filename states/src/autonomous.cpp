@@ -160,11 +160,11 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(200);
 	//turn to face flags
 	if(redAlliance){
-		turnDegrees(mtrDefs, 86, true /* turn left */);
+		turnDegrees(mtrDefs, 84, true /* turn left */);
 		pros::Task::delay(500);
 		driveRobot(mtrDefs, 50, 200);
 	} else {
-		turnDegrees(mtrDefs, 77, false /* turn right */);
+		turnDegrees(mtrDefs, 80.5, false /* turn right */);
 		pros::Task::delay(500);
 		driveRobot(mtrDefs, 50, 350);
 	}
