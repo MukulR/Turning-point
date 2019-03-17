@@ -26,31 +26,50 @@ void initPIDVals(MotorDefs *mtrDefs){
 	mtrDefs->right_mtr_f->set_pos_pid(pid);
 	mtrDefs->right_mtr_b->set_pos_pid(pid);
 	mtrDefs->middle_mtr->set_pos_pid(pid);
+
+	mtrDefs->left_mtr_f->set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+	mtrDefs->left_mtr_b->set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+	mtrDefs->right_mtr_f->set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+	mtrDefs->right_mtr_b->set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+	mtrDefs->middle_mtr->set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+
+}
+
+void driveRobot(MotorDefs *mtrDefs, double degrees, std::int32_t velocity){
+	mtrDefs->left_mtr_f->move_relative(degrees, velocity);
+	mtrDefs->left_mtr_b->move_relative(degrees, velocity);
+	mtrDefs->right_mtr_f->move_relative(degrees, velocity);
+	mtrDefs->right_mtr_b->move_relative(degrees, velocity);
+	mtrDefs->middle_mtr->move_relative(degrees, velocity);
+}
+
+void driveWithCoast(MotorDefs *mtrDefs, int time, int power){
+	mtrDefs->left_mtr_f->move(power);
+	mtrDefs->left_mtr_b->move(power);
+	mtrDefs->right_mtr_f->move(power);
+	mtrDefs->right_mtr_b->move(power);
+	mtrDefs->middle_mtr->move(power);
+	pros::Task::delay(time);
+	mtrDefs->left_mtr_f->move(0);
+	mtrDefs->left_mtr_b->move(0);
+	mtrDefs->right_mtr_f->move(0);
+	mtrDefs->right_mtr_b->move(0);
+	mtrDefs->middle_mtr->move(0);
+}
+
+void turnRobot(MotorDefs *mtrDefs, int degrees, bool left){
+	mtrDefs->left_mtr_f->move_relative(degrees, 65);	
+	mtrDefs->left_mtr_b->move_relative(degrees, 65);
+	mtrDefs->right_mtr_f->move_relative(degrees, -65);
+	mtrDefs->right_mtr_b->move_relative(degrees, -65);
 }
 
 void autonomous() {
 	MotorDefs mtrDefs;
 	initPIDVals(&mtrDefs);
-	switch (autonSelected) {
-		case 0:
-			pros::lcd::set_text(2, "Red Auton Running!");
-			//frontAuton(&mtrDefs, true /* red alliance */);
-			break;
-		case 1:
-			pros::lcd::set_text(2, "Blue Auton Running!");
-			//frontAuton(&mtrDefs, false /* blue alliance */);
-			break;
-		case 2:
-			pros::lcd::set_text(2, "Red Back With Park Auton Running!");
-			//backAuton(&mtrDefs, true /* red alliance */);
-			break;
-		case 3:
-			pros::lcd::set_text(2, "Blue Back With Park Auton Running!");
-			//backAuton(&mtrDefs, false /* blue alliance */);
-			break;
-		default:
-			pros::lcd::set_text(2, "no auton");
-			//noAuton();
-			break;
-	}
+	pros::Task::delay(2000);
+	driveWithCoast(&mtrDefs, 200, 10);
+	driveWithCoast(&mtrDefs, 200, 25);
+	driveWithCoast(&mtrDefs, 200, 50);
+	driveRobot(&mtrDefs, 1080, 127);
 }

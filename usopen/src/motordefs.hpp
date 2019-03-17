@@ -3,8 +3,6 @@
 #ifndef _MOTORDEFS_H_
 #define _MOTORDEFS_H_
 
-
-
 class MotorDefs {
     public:
         pros::Motor *left_mtr_f;
@@ -14,6 +12,7 @@ class MotorDefs {
         pros::Motor *right_mtr_b;
         pros::Motor *catapult_mtr;
         pros::Motor *intake_mtr;
+        pros::Motor *flipper_mtr;
 
         MotorDefs();
         ~MotorDefs();

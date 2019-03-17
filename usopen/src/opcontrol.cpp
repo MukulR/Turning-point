@@ -2,15 +2,14 @@
 #include "motordefs.hpp"
 
 #include "okapi/api.hpp"
-using namespace okapi;
 
 MotorDefs mtrDefs;
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-
+pros::ADIDigitalIn bumper('E');
 bool braked = false;
 
-void driveWithOkapi(void* param){
+void drive(void* param){
 	while(true) {
 		int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
@@ -29,7 +28,7 @@ void driveWithOkapi(void* param){
 		if(rightMtrVals < -127){
 			rightMtrVals = -127;
 		}
-		float midMtrVals = (leftMtrVals + rightMtrVals) / 2;
+		float midMtrVals = floor((leftMtrVals + rightMtrVals) / 2);
 		if(!braked){
 			mtrDefs.left_mtr_f->move(leftMtrVals);
 			mtrDefs.left_mtr_b->move(leftMtrVals);
@@ -44,34 +43,35 @@ void driveWithOkapi(void* param){
 
 void catapultShoot(void* param){
 	while(true){
-        if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-            while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-                mtrDefs.catapult_mtr->move(127);
-            }
-            mtrDefs.catapult_mtr->move(0);
-        }
-        pros::Task::delay(10);
-    }
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+				mtrDefs.catapult_mtr->move(127);
+			}
+			mtrDefs.catapult_mtr->move(0);
+		}
+		pros::Task::delay(10);
+	}
 }
 
 void catapultLoad(void* param){
-	pros::ADIDigitalIn bumper('E');
-  	while (true) {
+	while (true) {
 		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
 			mtrDefs.catapult_mtr->move(127);
 			while(bumper.get_value()){
 				pros::Task::delay(50);
 			}
 			mtrDefs.catapult_mtr->move(0);
-	  	}
+		}
 		pros::Task::delay(10);
-  	}
+	}
 }
+
 
 void intake(void* param){
 	static bool intakeStarted = false;
-    while(true){
-        if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+	pros::ADIDigitalIn limitS('G');
+	while(true){
+		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
 			if(!intakeStarted){
 				mtrDefs.intake_mtr->move(127);	
 				intakeStarted = true;
@@ -79,7 +79,9 @@ void intake(void* param){
 				mtrDefs.intake_mtr->move(0);
 				intakeStarted = false;
 			}
-			pros::Task::delay(300);
+			while(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+				pros::Task::delay(10);
+			}
 		}
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){	
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
@@ -87,8 +89,13 @@ void intake(void* param){
 			}
 			mtrDefs.intake_mtr->move(0);
 		}
-        pros::Task::delay(10);
-    }
+		if(limitS.get_new_press() && bumper.get_value()){
+			mtrDefs.intake_mtr->move(-50);
+			pros::Task::delay(50);
+			mtrDefs.intake_mtr->move(0);
+		}
+		pros::Task::delay(10);
+	}
 }
 
 void brake(void* param){
@@ -103,6 +110,22 @@ void brake(void* param){
 		}
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
 			braked = false;
+		}
+		pros::Task::delay(10);
+	}
+}
+
+void flipper(void *param){
+	bool up = false;
+	mtrDefs.flipper_mtr->set_encoder_units(MOTOR_ENCODER_DEGREES);
+	while(true){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A) && up == true){
+			mtrDefs.flipper_mtr->move_relative(160, 200);
+			up = false;
+		}
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A) && up == false){
+			mtrDefs.flipper_mtr->move_relative(160, -200);
+			up = true;
 		}
 		pros::Task::delay(10);
 	}
@@ -125,9 +148,10 @@ void brake(void* param){
 
 
 void opcontrol() {
-	pros::Task driveOkapiTask(driveWithOkapi);
+	pros::Task driveOkapiTask(drive);
 	pros::Task catapultPrepareToLoadTask(catapultLoad);
 	pros::Task catapultShootTask(catapultShoot);
 	pros::Task intakeTask(intake);
 	pros::Task brakeTask(brake);
+	pros::Task flipperTask(flipper);
 }
