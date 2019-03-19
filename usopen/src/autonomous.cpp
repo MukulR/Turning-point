@@ -19,6 +19,11 @@
  * from where it left off.
  */
 
+
+void frontAuton(MotorDefs *mtrDefs, bool redAlliance);
+void backAuton(MotorDefs *mtrDefs, bool redAlliance);
+void noAuton();
+
 void initPIDVals(MotorDefs *mtrDefs){
 	pros::motor_pid_s_t pid = pros::Motor::convert_pid(KF, KP, KI, KD);
 	mtrDefs->left_mtr_f->set_pos_pid(pid);
@@ -60,16 +65,60 @@ void driveWithCoast(MotorDefs *mtrDefs, int time, int power){
 void turnRobot(MotorDefs *mtrDefs, int degrees, bool left){
 	mtrDefs->left_mtr_f->move_relative(degrees, 65);	
 	mtrDefs->left_mtr_b->move_relative(degrees, 65);
-	mtrDefs->right_mtr_f->move_relative(degrees, -65);
-	mtrDefs->right_mtr_b->move_relative(degrees, -65);
+	mtrDefs->right_mtr_f->move_relative(-degrees, 65);
+	mtrDefs->right_mtr_b->move_relative(-degrees, 65);
+}
+
+void smoothDrive(MotorDefs *mtrDefs, int degrees, int power){
+	driveWithCoast(mtrDefs, 200, 10);
+	driveWithCoast(mtrDefs, 200, 25);
+	driveWithCoast(mtrDefs, 200, 50);
+	driveRobot(mtrDefs, degrees, power);
 }
 
 void autonomous() {
 	MotorDefs mtrDefs;
 	initPIDVals(&mtrDefs);
-	pros::Task::delay(2000);
-	driveWithCoast(&mtrDefs, 200, 10);
-	driveWithCoast(&mtrDefs, 200, 25);
-	driveWithCoast(&mtrDefs, 200, 50);
-	driveRobot(&mtrDefs, 1080, 127);
+	switch (autonSelected) {
+		case 0:
+			pros::lcd::set_text(2, "Red Auton Running!");
+			frontAuton(&mtrDefs, true /* red alliance */);
+			break;
+		case 1:
+			pros::lcd::set_text(2, "Blue Auton Running!");
+			frontAuton(&mtrDefs, false /* blue alliance */);
+			break;
+		case 2:
+			pros::lcd::set_text(2, "Red Back With Park Auton Running!");
+			backAuton(&mtrDefs, true /* red alliance */);
+			break;
+		case 3:
+			pros::lcd::set_text(2, "Blue Back With Park Auton Running!");
+			backAuton(&mtrDefs, false /* blue alliance */);
+			break;
+		default:
+			pros::lcd::set_text(2, "no auton");
+			noAuton();
+			break;
+	}
 }
+
+void getPlatformBall(MotorDefs *mtrDefs, bool redAlliance){
+	smoothDrive(mtrDefs, 450, 80);
+	if(redAlliance){
+		turnRobot(mtrDefs, 45, false);
+	} else {
+		turnRobot(mtrDefs, 45, true);
+	}
+}
+
+void frontAuton(MotorDefs *mtrDefs, bool redAlliance){
+	getPlatformBall(mtrDefs, redAlliance);
+}
+
+void backAuton(MotorDefs *mtrDefs, bool redAlliance){
+
+}
+
+
+void noAuton(){}

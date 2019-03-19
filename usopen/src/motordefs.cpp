@@ -10,7 +10,7 @@ MotorDefs::MotorDefs() {
     middle_mtr = new pros::Motor(20, pros::E_MOTOR_GEARSET_18, false);
     catapult_mtr = new pros::Motor(10, pros::E_MOTOR_GEARSET_36, false);
     intake_mtr = new pros::Motor(1, pros::E_MOTOR_GEARSET_06, false);
-    flipper_mtr = new pros::Motor(4, pros::E_MOTOR_GEARSET_18, true);
+    flipper_mtr = new pros::Motor(4, pros::E_MOTOR_GEARSET_36, true);
 }
 
 MotorDefs::~MotorDefs() { 

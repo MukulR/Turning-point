@@ -17,6 +17,7 @@ const float TURN_SCALE_FACTOR = 4.85;
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
 void frontAuton(MotorDefs *mtrDefs, bool redAlliance);
 void backAuton(MotorDefs *mtrDefs, bool redAlliance);
 void noAuton();

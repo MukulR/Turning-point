@@ -115,17 +115,21 @@ void brake(void* param){
 	}
 }
 
-void flipper(void *param){
-	bool up = false;
-	mtrDefs.flipper_mtr->set_encoder_units(MOTOR_ENCODER_DEGREES);
+void flipper(void *param){;
 	while(true){
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A) && up == true){
-			mtrDefs.flipper_mtr->move_relative(160, 200);
-			up = false;
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+			mtrDefs.flipper_mtr->move(127);
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+				pros::Task::delay(10);
+			}
+			mtrDefs.flipper_mtr->move(5);
 		}
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A) && up == false){
-			mtrDefs.flipper_mtr->move_relative(160, -200);
-			up = true;
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+			mtrDefs.flipper_mtr->move(-50);
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+				pros::Task::delay(10);
+			}
+			mtrDefs.flipper_mtr->move(-5);
 		}
 		pros::Task::delay(10);
 	}
@@ -148,6 +152,7 @@ void flipper(void *param){
 
 
 void opcontrol() {
+	master.print(0, 4, "315R Paradigm");
 	pros::Task driveOkapiTask(drive);
 	pros::Task catapultPrepareToLoadTask(catapultLoad);
 	pros::Task catapultShootTask(catapultShoot);
