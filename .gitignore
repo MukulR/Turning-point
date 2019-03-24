@@ -22,3 +22,4 @@ states/bin/*
 states/firmware/*
 usopen/bin/*
 usopen/firmware/*
+usopen/compile_commands.json

@@ -60,6 +60,7 @@ void catapultLoad(void* param){
 			while(bumper.get_value()){
 				pros::Task::delay(50);
 			}
+			pros::Task::delay(20);
 			mtrDefs.catapult_mtr->move(0);
 		}
 		pros::Task::delay(10);
