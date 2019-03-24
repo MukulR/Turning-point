@@ -119,7 +119,7 @@ void brake(void* param){
 void flipper(void *param){;
 	while(true){
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-			mtrDefs.flipper_mtr->move(127);
+			mtrDefs.flipper_mtr->move(90);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
 				pros::Task::delay(10);
 			}
