@@ -1,6 +1,9 @@
 #include "autonselection.h"
 #include "motordefs.hpp"
 
+#define LEFT_TURN 0
+#define RIGHT_TURN 1
+
 //PID constants
 #define KF 0
 #define KP 1.0f
@@ -43,14 +46,22 @@ void initPIDVals(MotorDefs *mtrDefs){
 }
 
 void waitForCompletion(MotorDefs *mtrDefs, double targetDegrees){
-	while ((abs(mtrDefs->left_mtr_f->get_target_position()) < targetDegrees && (abs(mtrDefs->left_mtr_f->get_actual_velocity()) > 0))
-			|| (abs(mtrDefs->left_mtr_b->get_target_position()) < targetDegrees && (abs(mtrDefs->left_mtr_f->get_actual_velocity()) > 0))
-			|| (abs(mtrDefs->left_mtr_f->get_target_position()) < targetDegrees && (abs(mtrDefs->left_mtr_f->get_actual_velocity()) > 0))
-			|| (abs(mtrDefs->right_mtr_b->get_target_position()) < targetDegrees && (abs(mtrDefs->left_mtr_f->get_actual_velocity()) > 0))
-			|| (abs(mtrDefs->right_mtr_f->get_target_position()) < targetDegrees && (abs(mtrDefs->left_mtr_f->get_actual_velocity()) > 0))
-			|| (abs(mtrDefs->middle_mtr->get_target_position()) < targetDegrees && (abs(mtrDefs->left_mtr_f->get_actual_velocity()) > 0))) {
+	while((abs(mtrDefs->left_mtr_b->get_position() - mtrDefs->left_mtr_b->get_target_position()) + 
+			abs(mtrDefs->left_mtr_f->get_position() - mtrDefs->left_mtr_f->get_target_position()) +
+			abs(mtrDefs->right_mtr_b->get_position() - mtrDefs->right_mtr_b->get_target_position()) +
+			abs(mtrDefs->right_mtr_f->get_position() - mtrDefs->right_mtr_f->get_target_position()) +
+			abs(mtrDefs->middle_mtr->get_position() - mtrDefs->middle_mtr->get_target_position())) > 7 * 5 ) {
 		pros::Task::delay(5);
 	}
+
+
+	/*
+	while(abs(mtrDefs->left_mtr_b->get_position() - mtrDefs->left_mtr_b->get_target_position()) > 10
+			&& abs(mtrDefs->left_mtr_f->get_position() - mtrDefs->left_mtr_f->get_target_position()) > 10
+			&& abs(mtrDefs->right_mtr_b->get_position() - mtrDefs->right_mtr_b->get_target_position()) > 10
+			&& abs(mtrDefs->right_mtr_f->get_position() - mtrDefs->right_mtr_f->get_target_position()) > 10){
+		pros::Task::delay(5);
+	}*/
 }
 
 void driveRobot(MotorDefs *mtrDefs, double degrees, std::int32_t velocity){
@@ -59,12 +70,15 @@ void driveRobot(MotorDefs *mtrDefs, double degrees, std::int32_t velocity){
 	mtrDefs->right_mtr_f->move_relative(degrees, velocity);
 	mtrDefs->right_mtr_b->move_relative(degrees, velocity);
 	mtrDefs->middle_mtr->move_relative(degrees, velocity);
+	waitForCompletion(mtrDefs, degrees);
+	/*
 	pros::Task::delay(50);
 	waitForCompletion(mtrDefs, degrees);
 	mtrDefs->left_mtr_f->move(0);	
 	mtrDefs->left_mtr_b->move(0);
 	mtrDefs->right_mtr_f->move(0);
 	mtrDefs->right_mtr_b->move(0);
+	*/
 }
 
 void driveWithCoast(MotorDefs *mtrDefs, int time, int power){
@@ -98,18 +112,24 @@ void turnRobot(MotorDefs *mtrDefs, int unscaledDegs, bool left){
 		mtrDefs->right_mtr_f->move_relative(-degrees, 65);
 		mtrDefs->right_mtr_b->move_relative(-degrees, 65);
 	}
+	// Hack TBR
+	while((abs(mtrDefs->left_mtr_b->get_position() - mtrDefs->left_mtr_b->get_target_position()) + 
+			abs(mtrDefs->left_mtr_f->get_position() - mtrDefs->left_mtr_f->get_target_position()) +
+			abs(mtrDefs->right_mtr_b->get_position() - mtrDefs->right_mtr_b->get_target_position()) +
+			abs(mtrDefs->right_mtr_f->get_position() - mtrDefs->right_mtr_f->get_target_position())) > 7 * 4 ) {
+	}
+	// HACK TBR
 	pros::Task::delay(50);
-	waitForCompletion(mtrDefs, degrees);
 	mtrDefs->left_mtr_f->move(0);	
 	mtrDefs->left_mtr_b->move(0);
 	mtrDefs->right_mtr_f->move(0);
 	mtrDefs->right_mtr_b->move(0);
 }
-void smoothDrive(MotorDefs *mtrDefs, int degrees, int power){
-	driveWithCoast(mtrDefs, 200, 10);
-	driveWithCoast(mtrDefs, 200, 25);
-	driveWithCoast(mtrDefs, 200, 50);
-	driveRobot(mtrDefs, degrees, power);
+void smoothDrive(MotorDefs *mtrDefs, int degrees, int power, int direction){
+	driveWithCoast(mtrDefs, 200, direction * 10);
+	driveWithCoast(mtrDefs, 200, direction * 25);
+	driveWithCoast(mtrDefs, 200, direction * 50);
+	driveRobot(mtrDefs, direction * degrees, power);
 }
 
 void autonomous() {
@@ -148,28 +168,33 @@ void shootCatapult(MotorDefs *mtrDefs){
 }
 
 void getPlatformBallAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
-	smoothDrive(mtrDefs, 500, 80);
+	smoothDrive(mtrDefs, 150, 80, 1);
+	pros::Task::delay(100);
 	if(redAlliance){
 		turnRobot(mtrDefs, 45, false);
 	} else {
 		turnRobot(mtrDefs, 45, true);
 	}
-	driveRobot(mtrDefs, 150, 50);
+	pros::Task::delay(50);
+	driveRobot(mtrDefs, 100, 50);
 	mtrDefs->intake_mtr->move(127);
 	mtrDefs->flipper_mtr->move(-40);
-	pros::Task::delay(300);
+	pros::Task::delay(500);
 	mtrDefs->flipper_mtr->move(0);
 	pros::Task::delay(700);
 	driveRobot(mtrDefs, -120, 50);
 	mtrDefs->flipper_mtr->move(80);
+	pros::Task::delay(50);
 	driveRobot(mtrDefs, -150, 50);
 	pros::Task::delay(50);
 	mtrDefs->flipper_mtr->move(10);
+	pros::Task::delay(100);
 	if(redAlliance){
 		turnRobot(mtrDefs, 45, true);
 	} else {
 		turnRobot(mtrDefs, 45, false);
 	}
+	pros::Task::delay(100);
 	driveWithCoast(mtrDefs, 500, -80);
 	driveWithCoast(mtrDefs, 150, -80);
 }
@@ -177,11 +202,13 @@ void getPlatformBallAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(300);
 	driveRobot(mtrDefs, 225, 50);
+	pros::Task::delay(200);
 	if(redAlliance){
 		turnRobot(mtrDefs, 88, true);
 	} else {
 		turnRobot(mtrDefs, 90, false);
 	}
+	pros::Task::delay(100);
 	driveRobot(mtrDefs, 150, 50);
 	pros::Task::delay(500);
 	shootCatapult(mtrDefs);
@@ -196,7 +223,7 @@ void toggleLowFlag(MotorDefs *mtrDefs, bool redAlliance){
 		turnRobot(mtrDefs, 5, false);
 	}
 	pros::Task::delay(240);
-	driveRobot(mtrDefs, 1300, 127);
+	driveRobot(mtrDefs, 1000, 127);
 	pros::Task::delay(100);
 	driveRobot(mtrDefs, -800, 127);
 }
@@ -205,6 +232,12 @@ void frontAuton(MotorDefs *mtrDefs, bool redAlliance){
 	getPlatformBallAndBackToTile(mtrDefs, redAlliance);
 	alignAndShoot(mtrDefs, redAlliance);
 	toggleLowFlag(mtrDefs, redAlliance);
+	/*
+	smoothDrive(mtrDefs, 400, 80, 1);
+	turnRobot(mtrDefs, 90, true);
+	turnRobot(mtrDefs, 90, false);
+	smoothDrive(mtrDefs, 400, 80, -1);
+	*/
 }
 
 void backAuton(MotorDefs *mtrDefs, bool redAlliance){
