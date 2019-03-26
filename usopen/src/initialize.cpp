@@ -1,64 +1,55 @@
 #include "main.h"
 #include "motordefs.hpp"
-#include "autonselection.h"
+#include "autonselection.hpp"
+#include "display/lv_objx/lv_btnm.h"
+
+#define NUMAUTONS 7
+
+/**
+ * Autonomous name documentation:
+ * P-O-M: Pickup ball from platform, shoot our flags, 
+ * 			pickup two balls from cap, shoot middle pole flags.
+ * 
+ * P-M-O: Pickup ball from platform, shoot middle pole flags,
+ * 			pick up two balls from cap, shoot our flags.
+ */
+ 
+static const char *btnm_map[] = {"P-O-M", "P-M-O", "U-O-M", "U-M-O", "\n",
+                                 "SM-U-PRK", "ST-U-PRK", "S-2BF-PRK", ""};
+static const char *auton_names[] = {"P-O-M", "P-M-O", "U-O-M", "U-M-O",
+                                 	  "SM-U-PRK", "ST-U-PRK", "S-2BF-PRK"};
+static const char *alliance_map[] = {"Red", "Blue", ""};
 
 int autonSelected;
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		switch (autonSelected){
-			case 0:
-				pros::lcd::set_text(2, "Red Auton Selected!");
-				break;
-			case 1:
-				pros::lcd::set_text(2, "Blue Auton Selected!");
-				break;
-			case 2:
-				pros::lcd::set_text(2, "Red Back Auton Selected!");
-				break;
-			case 3:
-				pros::lcd::set_text(2, "Blue Back Auton Selected!");
-				break;
-			default:
-				pros::lcd::set_text(2, "Auton Diasbled!");
-				break;
-		}
-	}
+bool redAlliance = false;
+
+static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
+   for (int i = 0; i < sizeof(auton_names) / sizeof(auton_names[0]); i++) {
+      printf("%s\n", auton_names[i]);
+      printf("%s\n", txt);
+      printf("-----------\n");
+      if (strcmp(auton_names[i], txt) == 0) {
+         autonSelected = i + 1;
+         break;
+      }
+      lv_btnm_set_toggle(btnm, true, autonSelected);
+   }
+
+   return LV_RES_OK; /*Return OK because the button matrix is not deleted*/
 }
 
-void on_right_button(){
-	static bool pressed = false;
-	static int numPresses = 0;
-	pressed = !pressed;
-	if (pressed){
-		switch(numPresses){
-			case 0:
-				pros::lcd::set_text(2, "Red Auton");
-				autonSelected = 0;
-				break;
-			case 1: 
-				pros::lcd::set_text(2, "Blue Auton");
-				autonSelected = 1;
-				break;
-			case 2:
-				pros::lcd::set_text(2, "Red Back Auton");
-				autonSelected = 2;
-				break;
-			case 3:
-				pros::lcd::set_text(2, "Blue Back Auton");
-				autonSelected = 3;
-				break;
-			case 4:
-				pros::lcd::set_text(2, "Auton Disabled");
-				autonSelected = 4;
-				break;
-		}
-		numPresses++;
-		if(numPresses > 4){
-			numPresses = 0;
-		}
-	}
+static lv_res_t btnm_action_color(lv_obj_t *btnm, const char *txt) {
+   lv_btnm_set_toggle(btnm, true, 1);
+   lv_btnm_set_toggle(btnm, true, 2);
+   printf("FUNCTION CALLED");
+   if (strcmp(txt, "Red") == 0) {
+    	redAlliance = true;
+   }
+   else if (strcmp(txt, "Blue") == 0) {
+    	redAlliance = false;
+   }
+
+   return LV_RES_OK; /*Return OK because the button matrix is not deleted*/
 }
 
 /**
@@ -67,10 +58,7 @@ void on_right_button(){
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "315R Paradigm          Connect to Comp Switch to choose auton!");
-}
+void initialize() {}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -89,11 +77,20 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {
-	pros::lcd::set_text(1, "Right Button For Auton Options");
-	pros::lcd::set_text(2, "Center Button For Auton Selection");
+	lv_theme_alien_init(190, NULL);
+	lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);
+	lv_label_set_text(title, "Auton Selection");
+	lv_obj_align(title, NULL, LV_ALIGN_IN_TOP_MID, 0, 10);
 
-	// Register functions for right button press and center button press
-	pros::lcd::register_btn1_cb(on_center_button);
-	pros::lcd::register_btn2_cb(on_right_button);
+	lv_obj_t *btnm = lv_btnm_create(lv_scr_act(), NULL);
+	lv_btnm_set_map(btnm, btnm_map);
+	lv_btnm_set_action(btnm, btnm_action);
+	lv_obj_set_size(btnm, LV_HOR_RES - 40, LV_VER_RES / 3);
+	lv_obj_align(btnm, title, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
+
+	lv_obj_t *allianceM = lv_btnm_create(lv_scr_act(), NULL);
+	lv_btnm_set_map(allianceM, alliance_map);
+	lv_btnm_set_action(allianceM, btnm_action_color);
+	lv_obj_set_size(allianceM, LV_HOR_RES - 40, 50);
+	lv_obj_align(allianceM, btnm, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
 }
-

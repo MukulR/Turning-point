@@ -1,4 +1,4 @@
-#include "autonselection.h"
+#include "autonselection.hpp"
 #include "motordefs.hpp"
 
 #define LEFT_TURN 0
@@ -24,8 +24,15 @@ const float TURN_SCALE_FACTOR = 2.9444444;
  * from where it left off.
  */
 
+void pickUpBallFromPlatformAndBackToTile(MotorDefs *mtrDefs, bool redAlliance);
+void pickupBallFromUnderCap(MotorDefs *mtrDefs, bool redAlliance);
+void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance);
+void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance);
+void alignAndShootMiddleFlags(MotorDefs *mtrDefs, bool redAlliance);
+void alignAndShootOpponentFlags(MotorDefs *mtrDefs, bool redAlliance);
+void toggleLowFlag(MotorDefs *mtrDefs, bool redAlliance);
 
-void frontAuton(MotorDefs *mtrDefs, bool redAlliance);
+void pom(MotorDefs *mtrDefs, bool redAlliance);
 void backAuton(MotorDefs *mtrDefs, bool redAlliance);
 void noAuton();
 
@@ -45,7 +52,7 @@ void initPIDVals(MotorDefs *mtrDefs){
 
 }
 
-void waitForCompletion(MotorDefs *mtrDefs, double targetDegrees){
+void waitForDriveCompletion(MotorDefs *mtrDefs){
 	while((abs(mtrDefs->left_mtr_b->get_position() - mtrDefs->left_mtr_b->get_target_position()) + 
 			abs(mtrDefs->left_mtr_f->get_position() - mtrDefs->left_mtr_f->get_target_position()) +
 			abs(mtrDefs->right_mtr_b->get_position() - mtrDefs->right_mtr_b->get_target_position()) +
@@ -53,15 +60,15 @@ void waitForCompletion(MotorDefs *mtrDefs, double targetDegrees){
 			abs(mtrDefs->middle_mtr->get_position() - mtrDefs->middle_mtr->get_target_position())) > 7 * 5 ) {
 		pros::Task::delay(5);
 	}
+}
 
-
-	/*
-	while(abs(mtrDefs->left_mtr_b->get_position() - mtrDefs->left_mtr_b->get_target_position()) > 10
-			&& abs(mtrDefs->left_mtr_f->get_position() - mtrDefs->left_mtr_f->get_target_position()) > 10
-			&& abs(mtrDefs->right_mtr_b->get_position() - mtrDefs->right_mtr_b->get_target_position()) > 10
-			&& abs(mtrDefs->right_mtr_f->get_position() - mtrDefs->right_mtr_f->get_target_position()) > 10){
-		pros::Task::delay(5);
-	}*/
+void waitForTurnCompletion(MotorDefs *mtrDefs) {
+	while((abs(mtrDefs->left_mtr_b->get_position() - mtrDefs->left_mtr_b->get_target_position()) + 
+			abs(mtrDefs->left_mtr_f->get_position() - mtrDefs->left_mtr_f->get_target_position()) +
+			abs(mtrDefs->right_mtr_b->get_position() - mtrDefs->right_mtr_b->get_target_position()) +
+			abs(mtrDefs->right_mtr_f->get_position() - mtrDefs->right_mtr_f->get_target_position())) > 7 * 4 ) {
+		pros::Task::delay(5);			
+	}
 }
 
 void driveRobot(MotorDefs *mtrDefs, double degrees, std::int32_t velocity){
@@ -70,15 +77,7 @@ void driveRobot(MotorDefs *mtrDefs, double degrees, std::int32_t velocity){
 	mtrDefs->right_mtr_f->move_relative(degrees, velocity);
 	mtrDefs->right_mtr_b->move_relative(degrees, velocity);
 	mtrDefs->middle_mtr->move_relative(degrees, velocity);
-	waitForCompletion(mtrDefs, degrees);
-	/*
-	pros::Task::delay(50);
-	waitForCompletion(mtrDefs, degrees);
-	mtrDefs->left_mtr_f->move(0);	
-	mtrDefs->left_mtr_b->move(0);
-	mtrDefs->right_mtr_f->move(0);
-	mtrDefs->right_mtr_b->move(0);
-	*/
+	waitForDriveCompletion(mtrDefs);
 }
 
 void driveWithCoast(MotorDefs *mtrDefs, int time, int power){
@@ -112,19 +111,9 @@ void turnRobot(MotorDefs *mtrDefs, int unscaledDegs, bool left){
 		mtrDefs->right_mtr_f->move_relative(-degrees, 65);
 		mtrDefs->right_mtr_b->move_relative(-degrees, 65);
 	}
-	// Hack TBR
-	while((abs(mtrDefs->left_mtr_b->get_position() - mtrDefs->left_mtr_b->get_target_position()) + 
-			abs(mtrDefs->left_mtr_f->get_position() - mtrDefs->left_mtr_f->get_target_position()) +
-			abs(mtrDefs->right_mtr_b->get_position() - mtrDefs->right_mtr_b->get_target_position()) +
-			abs(mtrDefs->right_mtr_f->get_position() - mtrDefs->right_mtr_f->get_target_position())) > 7 * 4 ) {
-	}
-	// HACK TBR
-	pros::Task::delay(50);
-	mtrDefs->left_mtr_f->move(0);	
-	mtrDefs->left_mtr_b->move(0);
-	mtrDefs->right_mtr_f->move(0);
-	mtrDefs->right_mtr_b->move(0);
+	waitForTurnCompletion(mtrDefs);
 }
+
 void smoothDrive(MotorDefs *mtrDefs, int degrees, int power, int direction){
 	driveWithCoast(mtrDefs, 200, direction * 10);
 	driveWithCoast(mtrDefs, 200, direction * 25);
@@ -137,23 +126,21 @@ void autonomous() {
 	initPIDVals(&mtrDefs);
 	switch (autonSelected) {
 		case 0:
-			pros::lcd::set_text(2, "Red Auton Running!");
-			frontAuton(&mtrDefs, true /* red alliance */);
+			pom(&mtrDefs, redAlliance);
 			break;
 		case 1:
-			pros::lcd::set_text(2, "Blue Auton Running!");
-			frontAuton(&mtrDefs, false /* blue alliance */);
 			break;
 		case 2:
-			pros::lcd::set_text(2, "Red Back With Park Auton Running!");
-			backAuton(&mtrDefs, true /* red alliance */);
 			break;
 		case 3:
-			pros::lcd::set_text(2, "Blue Back With Park Auton Running!");
-			backAuton(&mtrDefs, false /* blue alliance */);
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 6:
 			break;
 		default:
-			pros::lcd::set_text(2, "no auton");
 			noAuton();
 			break;
 	}
@@ -199,7 +186,60 @@ void getPlatformBallAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
 	driveWithCoast(mtrDefs, 150, -80);
 }
 
-void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
+void pom(MotorDefs *mtrDefs, bool redAlliance){
+	getPlatformBallAndBackToTile(mtrDefs, redAlliance);
+	alignAndShootOurFlags(mtrDefs, redAlliance);
+	toggleLowFlag(mtrDefs, redAlliance);
+}
+
+void backAuton(MotorDefs *mtrDefs, bool redAlliance){
+
+}
+
+
+void noAuton(){}
+
+void pickUpBallFromPlatformAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
+	smoothDrive(mtrDefs, 150, 80, 1);
+	pros::Task::delay(100);
+	if(redAlliance){
+		turnRobot(mtrDefs, 45, false);
+	} else {
+		turnRobot(mtrDefs, 45, true);
+	}
+	pros::Task::delay(50);
+	driveRobot(mtrDefs, 100, 50);
+	mtrDefs->intake_mtr->move(127);
+	mtrDefs->flipper_mtr->move(-40);
+	pros::Task::delay(500);
+	mtrDefs->flipper_mtr->move(0);
+	pros::Task::delay(700);
+	driveRobot(mtrDefs, -120, 50);
+	mtrDefs->flipper_mtr->move(80);
+	pros::Task::delay(50);
+	driveRobot(mtrDefs, -150, 50);
+	pros::Task::delay(50);
+	mtrDefs->flipper_mtr->move(10);
+	pros::Task::delay(100);
+	if(redAlliance){
+		turnRobot(mtrDefs, 45, true);
+	} else {
+		turnRobot(mtrDefs, 45, false);
+	}
+	pros::Task::delay(100);
+	driveWithCoast(mtrDefs, 500, -80);
+	driveWithCoast(mtrDefs, 150, -30);	
+}
+
+void pickupBallFromUnderCap(MotorDefs *mtrDefs, bool redAlliance){
+
+}
+
+void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance){
+
+}
+
+void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(300);
 	driveRobot(mtrDefs, 225, 50);
 	pros::Task::delay(200);
@@ -215,6 +255,14 @@ void alignAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	mtrDefs->intake_mtr->move(0);
 }
 
+void alignAndShootMiddleFlags(MotorDefs *mtrDefs, bool redAlliance){
+
+}
+
+void alignAndShootOpponentFlags(MotorDefs *mtrDefs, bool redAlliance){
+
+}
+
 void toggleLowFlag(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(500);
 	if(redAlliance){
@@ -227,16 +275,3 @@ void toggleLowFlag(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(100);
 	driveRobot(mtrDefs, -800, 127);
 }
-
-void frontAuton(MotorDefs *mtrDefs, bool redAlliance){
-	getPlatformBallAndBackToTile(mtrDefs, redAlliance);
-	alignAndShoot(mtrDefs, redAlliance);
-	toggleLowFlag(mtrDefs, redAlliance);
-}
-
-void backAuton(MotorDefs *mtrDefs, bool redAlliance){
-
-}
-
-
-void noAuton(){}
