@@ -232,12 +232,6 @@ void frontAuton(MotorDefs *mtrDefs, bool redAlliance){
 	getPlatformBallAndBackToTile(mtrDefs, redAlliance);
 	alignAndShoot(mtrDefs, redAlliance);
 	toggleLowFlag(mtrDefs, redAlliance);
-	/*
-	smoothDrive(mtrDefs, 400, 80, 1);
-	turnRobot(mtrDefs, 90, true);
-	turnRobot(mtrDefs, 90, false);
-	smoothDrive(mtrDefs, 400, 80, -1);
-	*/
 }
 
 void backAuton(MotorDefs *mtrDefs, bool redAlliance){
