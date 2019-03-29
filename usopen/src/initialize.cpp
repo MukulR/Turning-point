@@ -1,7 +1,7 @@
 #include "main.h"
 #include "motordefs.hpp"
 #include "autonselection.hpp"
-#include "display/lv_objx/lv_btnm.h"
+
 
 #define NUMAUTONS 7
 
@@ -24,12 +24,13 @@ int autonSelected;
 bool redAlliance = false;
 
 static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
+   printf("btnm_action Called \n");
    for (int i = 0; i < sizeof(auton_names) / sizeof(auton_names[0]); i++) {
       printf("%s\n", auton_names[i]);
       printf("%s\n", txt);
       printf("-----------\n");
       if (strcmp(auton_names[i], txt) == 0) {
-         autonSelected = i + 1;
+         autonSelected = i;
          break;
       }
       lv_btnm_set_toggle(btnm, true, autonSelected);
@@ -41,11 +42,13 @@ static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
 static lv_res_t btnm_action_color(lv_obj_t *btnm, const char *txt) {
    lv_btnm_set_toggle(btnm, true, 1);
    lv_btnm_set_toggle(btnm, true, 2);
-   printf("FUNCTION CALLED");
+   printf("btnm_action_color Called\n");
    if (strcmp(txt, "Red") == 0) {
+      printf("Red alliance\n");
     	redAlliance = true;
    }
    else if (strcmp(txt, "Blue") == 0) {
+      printf("Blue alliance\n");
     	redAlliance = false;
    }
 

@@ -60,7 +60,7 @@ void catapultLoad(void* param){
 			while(bumper.get_value()){
 				pros::Task::delay(50);
 			}
-			pros::Task::delay(20);
+			pros::Task::delay(10);
 			mtrDefs.catapult_mtr->move(0);
 		}
 		pros::Task::delay(10);
@@ -116,7 +116,7 @@ void brake(void* param){
 	}
 }
 
-void flipper(void *param){;
+void flipper(void *param){
 	while(true){
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
 			mtrDefs.flipper_mtr->move(90);

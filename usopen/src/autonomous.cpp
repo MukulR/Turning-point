@@ -24,7 +24,7 @@ const float TURN_SCALE_FACTOR = 2.9444444;
  * from where it left off.
  */
 
-void pickUpBallFromPlatformAndBackToTile(MotorDefs *mtrDefs, bool redAlliance);
+void getPlatformBallAndAlignAgainstFence(MotorDefs *mtrDefs, bool redAlliance);
 void pickupBallFromUnderCap(MotorDefs *mtrDefs, bool redAlliance);
 void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance);
 void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance);
@@ -154,40 +154,37 @@ void shootCatapult(MotorDefs *mtrDefs){
 	}
 }
 
-void getPlatformBallAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
-	smoothDrive(mtrDefs, 150, 80, 1);
-	pros::Task::delay(100);
-	if(redAlliance){
-		turnRobot(mtrDefs, 45, false);
-	} else {
-		turnRobot(mtrDefs, 45, true);
-	}
-	pros::Task::delay(50);
-	driveRobot(mtrDefs, 100, 50);
+void getPlatformBallAndAlignAgainstFence(MotorDefs *mtrDefs, bool redAlliance){
+	// Drive to the ball on platform
+	smoothDrive(mtrDefs, 350, 80, 1);
+	
+	// Pickup the ball
 	mtrDefs->intake_mtr->move(127);
 	mtrDefs->flipper_mtr->move(-40);
-	pros::Task::delay(500);
+	pros::Task::delay(250);
 	mtrDefs->flipper_mtr->move(0);
-	pros::Task::delay(700);
-	driveRobot(mtrDefs, -120, 50);
-	mtrDefs->flipper_mtr->move(80);
-	pros::Task::delay(50);
-	driveRobot(mtrDefs, -150, 50);
-	pros::Task::delay(50);
-	mtrDefs->flipper_mtr->move(10);
+	pros::Task::delay(750);
+	mtrDefs->flipper_mtr->move(110);
+	pros::Task::delay(250);
+	mtrDefs->flipper_mtr->move(5);
 	pros::Task::delay(100);
+
+	// Drive back to starting position
+	smoothDrive(mtrDefs, 350, 80, -1);
+
+	// Turn left if red alliance or right if blue alliance
 	if(redAlliance){
-		turnRobot(mtrDefs, 45, true);
+		turnRobot(mtrDefs, 25, true);
 	} else {
-		turnRobot(mtrDefs, 45, false);
+		turnRobot(mtrDefs, 25, false);
 	}
-	pros::Task::delay(100);
-	driveWithCoast(mtrDefs, 500, -80);
-	driveWithCoast(mtrDefs, 150, -80);
+
+	// Drive back so that the back of the robot aligns against the fence
+	driveWithCoast(mtrDefs, 450, -60);
 }
 
 void pom(MotorDefs *mtrDefs, bool redAlliance){
-	getPlatformBallAndBackToTile(mtrDefs, redAlliance);
+	getPlatformBallAndAlignAgainstFence(mtrDefs, redAlliance);
 	alignAndShootOurFlags(mtrDefs, redAlliance);
 	toggleLowFlag(mtrDefs, redAlliance);
 }
@@ -240,19 +237,16 @@ void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance){
 }
 
 void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance){
-	pros::Task::delay(300);
 	driveRobot(mtrDefs, 225, 50);
-	pros::Task::delay(200);
 	if(redAlliance){
-		turnRobot(mtrDefs, 88, true);
+		turnRobot(mtrDefs, 90, true);
 	} else {
 		turnRobot(mtrDefs, 90, false);
 	}
+	pros::Task::delay(50);
+	driveRobot(mtrDefs, 175, 50);
 	pros::Task::delay(100);
-	driveRobot(mtrDefs, 150, 50);
-	pros::Task::delay(500);
 	shootCatapult(mtrDefs);
-	mtrDefs->intake_mtr->move(0);
 }
 
 void alignAndShootMiddleFlags(MotorDefs *mtrDefs, bool redAlliance){
@@ -264,14 +258,15 @@ void alignAndShootOpponentFlags(MotorDefs *mtrDefs, bool redAlliance){
 }
 
 void toggleLowFlag(MotorDefs *mtrDefs, bool redAlliance){
-	pros::Task::delay(500);
 	if(redAlliance){
-		turnRobot(mtrDefs, 11, true);
+		turnRobot(mtrDefs, 7, true);
 	} else {
 		turnRobot(mtrDefs, 5, false);
 	}
-	pros::Task::delay(240);
-	driveRobot(mtrDefs, 1000, 127);
+	mtrDefs->flipper_mtr->move(-40);
+	pros::Task::delay(30);
+	mtrDefs->flipper_mtr->move_relative(0, 200);
+	driveRobot(mtrDefs, 750, 127);
 	pros::Task::delay(100);
-	driveRobot(mtrDefs, -800, 127);
+	driveRobot(mtrDefs, -600, 127);
 }
