@@ -11,7 +11,7 @@
 #define KD 0.1f
 
 const float TURN_SCALE_FACTOR = 2.9444444;
-
+pros::ADIDigitalIn bumpersw('E');
 /**
  * Runs the user autonomous code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -31,6 +31,8 @@ void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance);
 void alignAndShootMiddleFlags(MotorDefs *mtrDefs, bool redAlliance);
 void alignAndShootOpponentFlags(MotorDefs *mtrDefs, bool redAlliance);
 void toggleLowFlag(MotorDefs *mtrDefs, bool redAlliance);
+
+void flipperLowFlag(MotorDefs *mtrDefs);
 
 void pom(MotorDefs *mtrDefs, bool redAlliance);
 void backAuton(MotorDefs *mtrDefs, bool redAlliance);
@@ -156,12 +158,13 @@ void shootCatapult(MotorDefs *mtrDefs){
 
 void getPlatformBallAndAlignAgainstFence(MotorDefs *mtrDefs, bool redAlliance){
 	// Drive to the ball on platform
-	smoothDrive(mtrDefs, 350, 80, 1);
+	smoothDrive(mtrDefs, 375, 80, 1);
 	
 	// Pickup the ball
 	mtrDefs->intake_mtr->move(127);
 	mtrDefs->flipper_mtr->move(-40);
 	pros::Task::delay(250);
+	driveRobot(mtrDefs, -50, 50);
 	mtrDefs->flipper_mtr->move(0);
 	pros::Task::delay(750);
 	mtrDefs->flipper_mtr->move(110);
@@ -180,13 +183,16 @@ void getPlatformBallAndAlignAgainstFence(MotorDefs *mtrDefs, bool redAlliance){
 	}
 
 	// Drive back so that the back of the robot aligns against the fence
-	driveWithCoast(mtrDefs, 450, -60);
+	driveWithCoast(mtrDefs, 1000, -25);
 }
 
 void pom(MotorDefs *mtrDefs, bool redAlliance){
+	/*
 	getPlatformBallAndAlignAgainstFence(mtrDefs, redAlliance);
 	alignAndShootOurFlags(mtrDefs, redAlliance);
 	toggleLowFlag(mtrDefs, redAlliance);
+	*/
+	pickupBallsFromCapAndFlip(mtrDefs, redAlliance);
 }
 
 void backAuton(MotorDefs *mtrDefs, bool redAlliance){
@@ -196,56 +202,55 @@ void backAuton(MotorDefs *mtrDefs, bool redAlliance){
 
 void noAuton(){}
 
-void pickUpBallFromPlatformAndBackToTile(MotorDefs *mtrDefs, bool redAlliance){
-	smoothDrive(mtrDefs, 150, 80, 1);
-	pros::Task::delay(100);
-	if(redAlliance){
-		turnRobot(mtrDefs, 45, false);
-	} else {
-		turnRobot(mtrDefs, 45, true);
-	}
-	pros::Task::delay(50);
-	driveRobot(mtrDefs, 100, 50);
-	mtrDefs->intake_mtr->move(127);
-	mtrDefs->flipper_mtr->move(-40);
-	pros::Task::delay(500);
-	mtrDefs->flipper_mtr->move(0);
-	pros::Task::delay(700);
-	driveRobot(mtrDefs, -120, 50);
-	mtrDefs->flipper_mtr->move(80);
-	pros::Task::delay(50);
-	driveRobot(mtrDefs, -150, 50);
-	pros::Task::delay(50);
-	mtrDefs->flipper_mtr->move(10);
-	pros::Task::delay(100);
-	if(redAlliance){
-		turnRobot(mtrDefs, 45, true);
-	} else {
-		turnRobot(mtrDefs, 45, false);
-	}
-	pros::Task::delay(100);
-	driveWithCoast(mtrDefs, 500, -80);
-	driveWithCoast(mtrDefs, 150, -30);	
-}
-
 void pickupBallFromUnderCap(MotorDefs *mtrDefs, bool redAlliance){
 
 }
 
-void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance){
+void flipperCap(MotorDefs *mtrDefs){
+	mtrDefs->flipper_mtr->move_relative(-400, 200);
+}
 
+void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance){
+	/*
+	mtrDefs->catapult_mtr->move(127);
+	while(bumpersw.get_value()){
+		pros::Task::delay(50);
+	}
+	mtrDefs->catapult_mtr->move(0);
+	mtrDefs->flipper_mtr->move(50);
+	pros::Task::delay(100);
+	mtrDefs->flipper_mtr->move(0);
+	mtrDefs->intake_mtr->move(127);
+	mtrDefs->flipper_mtr->move_relative(-550, 200);
+	if(redAlliance){
+		turnRobot(mtrDefs, 75, false);
+	} else{
+		turnRobot(mtrDefs, 80, true);
+	}
+	*/
+	mtrDefs->intake_mtr->move(127);
+	pros::Task::delay(500);
+	//driveRobot(mtrDefs, 150, 30);
+	pros::Task::delay(50);
+	mtrDefs->flipper_mtr->move_relative(-625, 50);
+	pros::Task::delay(1000);
+	driveRobot(mtrDefs, -100, 30);
+	mtrDefs->flipper_mtr->move(100);
+	pros::Task::delay(100);
+	mtrDefs->flipper_mtr->move(0);
 }
 
 void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance){
 	driveRobot(mtrDefs, 225, 50);
+	pros::Task::delay(100);
 	if(redAlliance){
 		turnRobot(mtrDefs, 90, true);
 	} else {
 		turnRobot(mtrDefs, 90, false);
 	}
 	pros::Task::delay(50);
-	driveRobot(mtrDefs, 175, 50);
-	pros::Task::delay(100);
+	driveRobot(mtrDefs, 250, 50);
+	pros::Task::delay(200);
 	shootCatapult(mtrDefs);
 }
 
@@ -257,16 +262,18 @@ void alignAndShootOpponentFlags(MotorDefs *mtrDefs, bool redAlliance){
 
 }
 
+void flipperLowFlag(MotorDefs *mtrDefs){
+	mtrDefs->flipper_mtr->move_relative(-200, 200);
+}
+
 void toggleLowFlag(MotorDefs *mtrDefs, bool redAlliance){
 	if(redAlliance){
-		turnRobot(mtrDefs, 7, true);
+		turnRobot(mtrDefs, 10, true);
 	} else {
 		turnRobot(mtrDefs, 5, false);
 	}
-	mtrDefs->flipper_mtr->move(-40);
-	pros::Task::delay(30);
-	mtrDefs->flipper_mtr->move_relative(0, 200);
-	driveRobot(mtrDefs, 750, 127);
-	pros::Task::delay(100);
-	driveRobot(mtrDefs, -600, 127);
+	driveRobot(mtrDefs, 850, 127);
+	flipperLowFlag(mtrDefs);
+	pros::Task::delay(300);
+	driveRobot(mtrDefs, -850, 127);
 }
