@@ -40,7 +40,7 @@ void drive(void* param){
 		pros::Task::delay(10);
 	}
 }
-
+/*
 void catapultShoot(void* param){
 	while(true){
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
@@ -52,7 +52,22 @@ void catapultShoot(void* param){
 		pros::Task::delay(10);
 	}
 }
+*/
+void catapult(void* param){
+	while(true){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+			mtrDefs.catapult_mtr->move(127);
+			pros::Task::delay(500);
+			while(bumper.get_value()){
+				pros::Task::delay(50);
+			}
+			pros::Task::delay(7);
+			mtrDefs.catapult_mtr->move(0);
+		}
+	}
+}
 
+/*
 void catapultLoad(void* param){
 	while (true) {
 		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
@@ -66,7 +81,7 @@ void catapultLoad(void* param){
 		pros::Task::delay(10);
 	}
 }
-
+*/
 
 void intake(void* param){
 	static bool intakeStarted = false;
@@ -153,10 +168,8 @@ void flipper(void *param){
 
 
 void opcontrol() {
-	master.print(0, 4, "315R Paradigm");
 	pros::Task driveOkapiTask(drive);
-	pros::Task catapultPrepareToLoadTask(catapultLoad);
-	pros::Task catapultShootTask(catapultShoot);
+	pros::Task catapultShootTask(catapult);
 	pros::Task intakeTask(intake);
 	pros::Task brakeTask(brake);
 	pros::Task flipperTask(flipper);
