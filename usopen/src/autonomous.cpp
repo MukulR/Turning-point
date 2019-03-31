@@ -245,20 +245,19 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 		turnRobot(mtrDefs, 45, true);
 	}
 	
-	// Move forwardso that when we bring the flipper down it is well over the peg of the
+	// Move forward so that when we bring the flipper down it is well over the peg of the
 	// cap.
-	driveRobot(mtrDefs, 410, 40);
+	driveRobot(mtrDefs, 420, 40);
 
 	// Bring the flipper down
 	flipperMove(mtrDefs, 2500, 25, -1);
 
-	// Now drive back a bit so that cap bends towards the robot so that balls
-	// fall into intake
-	driveRobot(mtrDefs, -300, 80);
-
 	// Start the intake
 	mtrDefs->intake_mtr->move(127);
-	pros::Task::delay(1000);
+
+	// Now drive back a bit so that cap bends towards the robot so that balls
+	// fall into intake
+	driveRobot(mtrDefs, -300, 100);
 
 	// Bring the flipper up
 	flipperMove(mtrDefs, 315, 127, 1);
@@ -274,33 +273,10 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	}
 
 	// Add a slight delay so that robot has a chance to settle down
-	pros::Task::delay(200);
+	pros::Task::delay(1000);
 
 	// Shoot top two middle flags
 	shootCatapult(mtrDefs);
-
-	/*
-	// Start intake motor
-	mtrDefs->intake_mtr->move(127);
-
-	// Bring the flipper down so that it is just above the cap
-	flipperMove(mtrDefs, 2517, 25, -1);
-	pros::Task::delay(200);
-
-	// Move forward so that flipper is well above the cap
-	driveRobot(mtrDefs, 360, 40);
-
-	// Push flipper down so that cap bends towards the robot and balls get into intake
-	flipperMove(mtrDefs, 2800, 127, -1);
-	pros::Task::delay(2500);
-	driveRobot(mtrDefs, 300, 80);
-	if(redAlliance){
-		turnRobot(mtrDefs, 5, false);
-	} else{
-		turnRobot(mtrDefs, 5, true);
-	}
-	shootCatapult(mtrDefs);
-	*/
 }
 
 void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance){
