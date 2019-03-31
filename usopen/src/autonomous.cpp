@@ -12,7 +12,7 @@
 
 const float TURN_SCALE_FACTOR = 2.9444444;
 
-pros::ADIDigitalIn bumper_auton('E');
+pros::ADIDigitalIn bumper_auton('C');
 pros::ADIPotentiometer potentiometer('H');
 
 /**
@@ -235,8 +235,7 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	mtrDefs->catapult_mtr->move(0);
 
 	//come back so that we compensate for the distance we would have traveled to shoot the flags
-	driveRobot(mtrDefs, -250, 50);
-	pros::Task::delay(200);
+	driveRobot(mtrDefs, -225, 50);
 
 	//align to the cap 
 	if(redAlliance){
@@ -247,7 +246,7 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	
 	// Move forward so that when we bring the flipper down it is well over the peg of the
 	// cap.
-	driveRobot(mtrDefs, 420, 40);
+	driveRobot(mtrDefs, 460, 40);
 
 	// Bring the flipper down
 	flipperMove(mtrDefs, 2500, 25, -1);
@@ -259,21 +258,28 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	// fall into intake
 	driveRobot(mtrDefs, -300, 100);
 
-	// Bring the flipper up
+	// Bring the flipper up so that we let go of the cap
 	flipperMove(mtrDefs, 315, 127, 1);
+	pros::Task::delay(200);
 
+	// Bfring flipper down so that when we move forward cap doesn't get stuck in intake
+	flipperMove(mtrDefs, 3320, 127, -1);
+	
 	// Move forward a bit so that we are within range of top two middle flags
 	driveRobot(mtrDefs, 425, 80);
 
+	// Bring flipper back up with the hope that we flip the cap
+	flipperMove(mtrDefs, 315, 127, 1);
+
 	// Turn to make sure we can hit the flags
 	if(redAlliance){
-		turnRobot(mtrDefs, 5, false);
+		turnRobot(mtrDefs, 10, false);
 	} else{
-		turnRobot(mtrDefs, 5, true);
+		turnRobot(mtrDefs, 10, true);
 	}
 
-	// Add a slight delay so that robot has a chance to settle down
-	pros::Task::delay(1000);
+	// Add a slight delay so that robot loads the balls properly
+	pros::Task::delay(1500);
 
 	// Shoot top two middle flags
 	shootCatapult(mtrDefs);

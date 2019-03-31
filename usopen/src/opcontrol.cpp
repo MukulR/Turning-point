@@ -6,7 +6,7 @@
 MotorDefs mtrDefs;
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::ADIDigitalIn bumper('E');
+pros::ADIDigitalIn bumper('C');
 
 bool braked = false;
 
