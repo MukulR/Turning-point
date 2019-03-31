@@ -59,35 +59,20 @@ void catapult(void* param){
 			mtrDefs.catapult_mtr->move(127);
 			pros::Task::delay(500);
 			while(bumper.get_value()){
+				if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+					break;
+				}
 				pros::Task::delay(50);
 			}
-			pros::Task::delay(7);
 			mtrDefs.catapult_mtr->move(0);
 		}
 	}
 }
-
-/*
-void catapultLoad(void* param){
-	while (true) {
-		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
-			mtrDefs.catapult_mtr->move(127);
-			while(bumper.get_value()){
-				pros::Task::delay(50);
-			}
-			pros::Task::delay(10);
-			mtrDefs.catapult_mtr->move(0);
-		}
-		pros::Task::delay(10);
-	}
-}
-*/
 
 void intake(void* param){
 	static bool intakeStarted = false;
-	pros::ADIDigitalIn limitS('G');
-	while(true){
-		if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+    while(true){
+        if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
 			if(!intakeStarted){
 				mtrDefs.intake_mtr->move(127);	
 				intakeStarted = true;
@@ -95,24 +80,15 @@ void intake(void* param){
 				mtrDefs.intake_mtr->move(0);
 				intakeStarted = false;
 			}
-			while(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
-				pros::Task::delay(10);
-			}
-		}
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){	
+			pros::Task::delay(100);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
 				mtrDefs.intake_mtr->move(-127);
 			}
-			mtrDefs.intake_mtr->move(0);
+			pros::Task::delay(300);
 		}
-		if(limitS.get_new_press() && bumper.get_value()){
-			mtrDefs.intake_mtr->move(-50);
-			pros::Task::delay(50);
-			mtrDefs.intake_mtr->move(0);
-		}
-		pros::Task::delay(10);
-	}
-}
+        pros::Task::delay(10);
+    }
+}       
 
 void brake(void* param){
 	while(true){
@@ -133,19 +109,19 @@ void brake(void* param){
 
 void flipper(void *param){
 	while(true){
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 			mtrDefs.flipper_mtr->move(90);
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 				pros::Task::delay(10);
 			}
-			mtrDefs.flipper_mtr->move(5);
+			mtrDefs.flipper_mtr->move(10);
 		}
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 			mtrDefs.flipper_mtr->move(-50);
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 				pros::Task::delay(10);
 			}
-			mtrDefs.flipper_mtr->move(-5);
+			mtrDefs.flipper_mtr->move(-2);
 		}
 		pros::Task::delay(10);
 	}
