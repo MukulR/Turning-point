@@ -73,6 +73,11 @@ void intake(void* param){
 	static bool intakeStarted = false;
     while(true){
         if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+			pros::Task::delay(100);
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+				mtrDefs.intake_mtr->move(-127);
+			}
+			pros::Task::delay(300);
 			if(!intakeStarted){
 				mtrDefs.intake_mtr->move(127);	
 				intakeStarted = true;
@@ -80,11 +85,6 @@ void intake(void* param){
 				mtrDefs.intake_mtr->move(0);
 				intakeStarted = false;
 			}
-			pros::Task::delay(100);
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-				mtrDefs.intake_mtr->move(-127);
-			}
-			pros::Task::delay(300);
 		}
         pros::Task::delay(10);
     }
