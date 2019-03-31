@@ -11,8 +11,10 @@
 #define KD 0.1f
 
 const float TURN_SCALE_FACTOR = 2.9444444;
-pros::ADIDigitalIn bumpersw('E');
+
+pros::ADIDigitalIn bumper_auton('E');
 pros::ADIPotentiometer potentiometer('H');
+
 /**
  * Runs the user autonomous code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -27,7 +29,7 @@ pros::ADIPotentiometer potentiometer('H');
 
 void getPlatformBallAndAlignAgainstFence(MotorDefs *mtrDefs, bool redAlliance);
 void pickupBallFromUnderCap(MotorDefs *mtrDefs, bool redAlliance);
-void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance);
+void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance);
 void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance);
 void alignAndShootMiddleFlags(MotorDefs *mtrDefs, bool redAlliance);
 void alignAndShootOpponentFlags(MotorDefs *mtrDefs, bool redAlliance);
@@ -41,9 +43,15 @@ void noAuton();
 
 
 void flipperMove(MotorDefs* mtrDefs, int potValue, int power, int direction){
-	mtrDefs->flipper_mtr->move(direction * power); 
-	while(potentiometer.get_value() < potValue){
-		pros::Task::delay(5);
+	mtrDefs->flipper_mtr->move(direction * power);
+	if(direction == 1){ // Bring flipper up
+		while(potentiometer.get_value() > potValue){
+			pros::Task::delay(5);
+		}
+	} else { // Bring flipper down
+		while(potentiometer.get_value() < potValue){
+			pros::Task::delay(5);
+		}
 	}
 	mtrDefs->flipper_mtr->move_relative(0, 200);
 }
@@ -176,7 +184,6 @@ void getPlatformBallAndAlignAgainstFence(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(350);
 	driveRobot(mtrDefs, -50, 50);
 	mtrDefs->flipper_mtr->move(0);
-	pros::Task::delay(750);
 	pros::Task::delay(100);
 
 	// Drive back to starting position
@@ -184,9 +191,9 @@ void getPlatformBallAndAlignAgainstFence(MotorDefs *mtrDefs, bool redAlliance){
 
 	// Turn left if red alliance or right if blue alliance
 	if(redAlliance){
-		turnRobot(mtrDefs, 25, true);
+		turnRobot(mtrDefs, 33, true);
 	} else {
-		turnRobot(mtrDefs, 25, false);
+		turnRobot(mtrDefs, 33, false);
 	}
 
 	// Drive back so that the back of the robot aligns against the fence and bring up flipper
@@ -200,7 +207,7 @@ void pom(MotorDefs *mtrDefs, bool redAlliance){
 	getPlatformBallAndAlignAgainstFence(mtrDefs, redAlliance);
 	alignAndShootOurFlags(mtrDefs, redAlliance);
 	//toggleLowFlag(mtrDefs, redAlliance);
-	pickupBallsFromCapAndFlip(mtrDefs, redAlliance);
+	pickupBallsFromCapFlipAndShoot(mtrDefs, redAlliance);
 }
 
 void backAuton(MotorDefs *mtrDefs, bool redAlliance){
@@ -218,13 +225,12 @@ void flipperCapPos(MotorDefs *mtrDefs){
 	mtrDefs->flipper_mtr->move_relative(-400, 200);
 }
 
-
-
-void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance){
+void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	//bring catapult down to loading position
 	mtrDefs->catapult_mtr->move(127);
-	while(bumpersw.get_value()){
-		pros::Task::delay(5);
+	pros::Task::delay(100);
+	while(bumper_auton.get_value()){
+		pros::Task::delay(50);
 	}
 	mtrDefs->catapult_mtr->move(0);
 
@@ -234,11 +240,46 @@ void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance){
 
 	//align to the cap 
 	if(redAlliance){
-		turnRobot(mtrDefs, 40, false);
+		turnRobot(mtrDefs, 45, false);
 	} else {
-		turnRobot(mtrDefs, 40, true);
+		turnRobot(mtrDefs, 45, true);
 	}
 	
+	// Move forwardso that when we bring the flipper down it is well over the peg of the
+	// cap.
+	driveRobot(mtrDefs, 410, 40);
+
+	// Bring the flipper down
+	flipperMove(mtrDefs, 2500, 25, -1);
+
+	// Now drive back a bit so that cap bends towards the robot so that balls
+	// fall into intake
+	driveRobot(mtrDefs, -300, 80);
+
+	// Start the intake
+	mtrDefs->intake_mtr->move(127);
+	pros::Task::delay(1000);
+
+	// Bring the flipper up
+	flipperMove(mtrDefs, 315, 127, 1);
+
+	// Move forward a bit so that we are within range of top two middle flags
+	driveRobot(mtrDefs, 425, 80);
+
+	// Turn to make sure we can hit the flags
+	if(redAlliance){
+		turnRobot(mtrDefs, 5, false);
+	} else{
+		turnRobot(mtrDefs, 5, true);
+	}
+
+	// Add a slight delay so that robot has a chance to settle down
+	pros::Task::delay(200);
+
+	// Shoot top two middle flags
+	shootCatapult(mtrDefs);
+
+	/*
 	// Start intake motor
 	mtrDefs->intake_mtr->move(127);
 
@@ -247,10 +288,19 @@ void pickupBallsFromCapAndFlip(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(200);
 
 	// Move forward so that flipper is well above the cap
-	driveRobot(mtrDefs, 225, 25);
+	driveRobot(mtrDefs, 360, 40);
 
 	// Push flipper down so that cap bends towards the robot and balls get into intake
-	flipperMove(mtrDefs, 2900, 100, -1);
+	flipperMove(mtrDefs, 2800, 127, -1);
+	pros::Task::delay(2500);
+	driveRobot(mtrDefs, 300, 80);
+	if(redAlliance){
+		turnRobot(mtrDefs, 5, false);
+	} else{
+		turnRobot(mtrDefs, 5, true);
+	}
+	shootCatapult(mtrDefs);
+	*/
 }
 
 void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance){
