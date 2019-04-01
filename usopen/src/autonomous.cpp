@@ -41,6 +41,16 @@ void pom(MotorDefs *mtrDefs, bool redAlliance);
 void backAuton(MotorDefs *mtrDefs, bool redAlliance);
 void noAuton();
 
+void catapultLoad(void* param){
+	MotorDefs *mtrDefs = (MotorDefs*)param;
+	mtrDefs->catapult_mtr->move(127);
+	pros::Task::delay(100);
+	while(bumper_auton.get_value()){
+		pros::Task::delay(50);
+	}
+	mtrDefs->catapult_mtr->move(0);
+}
+
 
 void flipperMove(MotorDefs* mtrDefs, int potValue, int power, int direction){
 	mtrDefs->flipper_mtr->move(direction * power);
@@ -233,24 +243,32 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 		pros::Task::delay(50);
 	}
 	mtrDefs->catapult_mtr->move(0);
+	//pros::Task cataLoadTask (catapultLoad, mtrDefs, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "CatapultLoadTask");
 
 	//come back so that we compensate for the distance we would have traveled to shoot the flags
-	driveRobot(mtrDefs, -225, 50);
+	driveRobot(mtrDefs, -150, 50);
 
 	//align to the cap 
 	if(redAlliance){
-		turnRobot(mtrDefs, 45, false);
+		turnRobot(mtrDefs, 43, false);
 	} else {
-		turnRobot(mtrDefs, 45, true);
+		turnRobot(mtrDefs, 43, true);
 	}
 	
 	// Move forward so that when we bring the flipper down it is well over the peg of the
 	// cap.
-	driveRobot(mtrDefs, 460, 40);
+	driveRobot(mtrDefs, 460, 80);
 
 	// Bring the flipper down
-	flipperMove(mtrDefs, 2500, 25, -1);
+	flipperMove(mtrDefs, 2500, 80, -1);
 
+	//block until catapultloadtask completes
+	/*
+	while(cataLoadTask.get_state() == pros::E_TASK_STATE_RUNNING){
+		pros::Task::delay(10);
+	}
+	cataLoadTask.suspend();
+	*/
 	// Start the intake
 	mtrDefs->intake_mtr->move(127);
 
@@ -262,18 +280,19 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	flipperMove(mtrDefs, 315, 127, 1);
 	pros::Task::delay(200);
 
-	// Bfring flipper down so that when we move forward cap doesn't get stuck in intake
+	// Bring flipper down so that when we move forward cap doesn't get stuck in intake
+	driveRobot(mtrDefs, -100, 80);
 	flipperMove(mtrDefs, 3320, 127, -1);
 	
 	// Move forward a bit so that we are within range of top two middle flags
-	driveRobot(mtrDefs, 425, 80);
+	driveRobot(mtrDefs, 460, 80);
 
 	// Bring flipper back up with the hope that we flip the cap
-	flipperMove(mtrDefs, 315, 127, 1);
+	flipperMove(mtrDefs, 315, 90, 1);
 
 	// Turn to make sure we can hit the flags
 	if(redAlliance){
-		turnRobot(mtrDefs, 10, false);
+		turnRobot(mtrDefs, 8, false);
 	} else{
 		turnRobot(mtrDefs, 10, true);
 	}
@@ -289,9 +308,9 @@ void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance){
 	driveRobot(mtrDefs, 225, 50);
 	pros::Task::delay(100);
 	if(redAlliance){
-		turnRobot(mtrDefs, 90, true);
+		turnRobot(mtrDefs, 88, true);
 	} else {
-		turnRobot(mtrDefs, 90, false);
+		turnRobot(mtrDefs, 88, false);
 	}
 	pros::Task::delay(50);
 	driveRobot(mtrDefs, 250, 50);
