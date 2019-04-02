@@ -48,6 +48,7 @@ void catapultLoad(void* param){
 	while(bumper_auton.get_value()){
 		pros::Task::delay(50);
 	}
+	pros::Task::delay(7);
 	mtrDefs->catapult_mtr->move(0);
 }
 
@@ -203,7 +204,7 @@ void getPlatformBallAndAlignAgainstFence(MotorDefs *mtrDefs, bool redAlliance){
 	if(redAlliance){
 		turnRobot(mtrDefs, 33, true);
 	} else {
-		turnRobot(mtrDefs, 33, false);
+		turnRobot(mtrDefs, 18, false);
 	}
 
 	// Drive back so that the back of the robot aligns against the fence and bring up flipper
@@ -252,7 +253,7 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	if(redAlliance){
 		turnRobot(mtrDefs, 43, false);
 	} else {
-		turnRobot(mtrDefs, 43, true);
+		turnRobot(mtrDefs, 45, true);
 	}
 	
 	// Move forward so that when we bring the flipper down it is well over the peg of the
@@ -274,7 +275,11 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 
 	// Now drive back a bit so that cap bends towards the robot so that balls
 	// fall into intake
-	driveRobot(mtrDefs, -300, 100);
+	if(redAlliance){
+		driveRobot(mtrDefs, -300, 100);
+	} else{
+		driveRobot(mtrDefs, -200, 100);
+	}
 
 	// Bring the flipper up so that we let go of the cap
 	flipperMove(mtrDefs, 315, 127, 1);
@@ -285,7 +290,8 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	flipperMove(mtrDefs, 3320, 127, -1);
 	
 	// Move forward a bit so that we are within range of top two middle flags
-	driveRobot(mtrDefs, 460, 80);
+
+	driveRobot(mtrDefs, 475, 80);
 
 	// Bring flipper back up with the hope that we flip the cap
 	flipperMove(mtrDefs, 315, 90, 1);
@@ -294,8 +300,9 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	if(redAlliance){
 		turnRobot(mtrDefs, 8, false);
 	} else{
-		turnRobot(mtrDefs, 10, true);
-	}
+		turnRobot(mtrDefs, 12, false);	
+	}//turn right for blue as catapult is on the left side already 
+
 
 	// Add a slight delay so that robot loads the balls properly
 	pros::Task::delay(1500);
@@ -305,12 +312,16 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 }
 
 void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance){
-	driveRobot(mtrDefs, 225, 50);
+	if(redAlliance){
+		driveRobot(mtrDefs, 225, 50);
+	} else{
+		driveRobot(mtrDefs, 75, 50);
+	}
 	pros::Task::delay(100);
 	if(redAlliance){
 		turnRobot(mtrDefs, 88, true);
 	} else {
-		turnRobot(mtrDefs, 88, false);
+		turnRobot(mtrDefs, 90, false);
 	}
 	pros::Task::delay(50);
 	driveRobot(mtrDefs, 250, 50);
