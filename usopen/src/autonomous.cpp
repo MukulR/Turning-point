@@ -28,11 +28,8 @@ pros::ADIPotentiometer potentiometer('H');
  */
 
 void getPlatformBallAndAlignAgainstFence(MotorDefs *mtrDefs, bool redAlliance);
-void pickupBallFromUnderCap(MotorDefs *mtrDefs, bool redAlliance);
 void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance);
 void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance);
-void alignAndShootMiddleFlags(MotorDefs *mtrDefs, bool redAlliance);
-void alignAndShootOpponentFlags(MotorDefs *mtrDefs, bool redAlliance);
 void toggleLowFlag(MotorDefs *mtrDefs, bool redAlliance);
 
 void flipperLowFlag(MotorDefs *mtrDefs);
@@ -48,7 +45,6 @@ void catapultLoad(void* param){
 	while(bumper_auton.get_value()){
 		pros::Task::delay(50);
 	}
-	pros::Task::delay(7);
 	mtrDefs->catapult_mtr->move(0);
 }
 
@@ -166,6 +162,7 @@ void autonomous() {
 		case 3:
 			break;
 		case 4:
+			backAuton(&mtrDefs, redAlliance);
 			break;
 		case 5:
 			break;
@@ -222,29 +219,75 @@ void pom(MotorDefs *mtrDefs, bool redAlliance){
 }
 
 void backAuton(MotorDefs *mtrDefs, bool redAlliance){
+	// Hold power on flipper so that it doesn't come down
+	mtrDefs->flipper_mtr->move(5);
 
+	// Lets wait for 5 seconds
+	pros::Task::delay(5000);
+
+	// Shoot middle pole top flag
+	shootCatapult(mtrDefs);
+	// Align against fence and pick up ball from underneath the cap
+	pros::Task::delay(100);
+	pros::Task cataLoadTask(catapultLoad, mtrDefs);
+	driveRobot(mtrDefs, -75, 30);
+	if(redAlliance){
+		turnRobot(mtrDefs, 45, false);
+	} else {
+		turnRobot(mtrDefs, 45, true);
+	}
+	//hit the fence
+	driveWithCoast(mtrDefs, 1000, -30);
+	while(cataLoadTask.get_state() == pros::E_TASK_STATE_RUNNING){
+		pros::Task::delay(5);
+	}
+	mtrDefs->intake_mtr->move(127);
+	smoothDrive(mtrDefs, 1000, 127, 1);
+	// Align and shoot opponent's flag
+	pros::Task::delay(100);
+	//drive back so that the turn can be in the middle of the platform
+	//smoothDrive(mtrDefs, 10, 80, -1);
+	//turn to face platform
+	if(redAlliance){
+		turnRobot(mtrDefs, 90, true);
+	} else {
+		turnRobot(mtrDefs, 90, false);
+	}
+	//align with platform
+	driveWithCoast(mtrDefs, 700, 30);
+	pros::Task::delay(200);
+	// Drive back and turn to face opponent's flag
+	driveRobot(mtrDefs, -150, 50);
+	if(redAlliance){
+		turnRobot(mtrDefs, 30, false);
+	} else {
+		turnRobot(mtrDefs, 45, true);
+	}
+	// Shoot opponent's flag
+	shootCatapult(mtrDefs);
+	pros::Task::delay(200);
+	// Turn to face the platform
+	if(redAlliance){
+		turnRobot(mtrDefs, 30, true);
+	} else {
+		turnRobot(mtrDefs, 30, false);
+	}
+	// Let the robot stabilize before shooting
+	pros::Task::delay(1000);
+	// Drive and park on platform
+	driveWithCoast(mtrDefs, 1100, 100);
 }
 
 
 void noAuton(){}
-
-void pickupBallFromUnderCap(MotorDefs *mtrDefs, bool redAlliance){
-
-}
 
 void flipperCapPos(MotorDefs *mtrDefs){
 	mtrDefs->flipper_mtr->move_relative(-400, 200);
 }
 
 void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
-	//bring catapult down to loading position
-	mtrDefs->catapult_mtr->move(127);
-	pros::Task::delay(100);
-	while(bumper_auton.get_value()){
-		pros::Task::delay(50);
-	}
-	mtrDefs->catapult_mtr->move(0);
-	//pros::Task cataLoadTask (catapultLoad, mtrDefs, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "CatapultLoadTask");
+	//bring catapult down to loading position asynchronously using a task.
+	pros::Task cataLoadTask(catapultLoad, mtrDefs);
 
 	//come back so that we compensate for the distance we would have traveled to shoot the flags
 	driveRobot(mtrDefs, -150, 50);
@@ -264,12 +307,7 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	flipperMove(mtrDefs, 2500, 80, -1);
 
 	//block until catapultloadtask completes
-	/*
-	while(cataLoadTask.get_state() == pros::E_TASK_STATE_RUNNING){
-		pros::Task::delay(10);
-	}
-	cataLoadTask.suspend();
-	*/
+	
 	// Start the intake
 	mtrDefs->intake_mtr->move(127);
 
@@ -328,14 +366,6 @@ void alignAndShootOurFlags(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(200);
 	shootCatapult(mtrDefs);
 	mtrDefs->intake_mtr->move(0);
-}
-
-void alignAndShootMiddleFlags(MotorDefs *mtrDefs, bool redAlliance){
-
-}
-
-void alignAndShootOpponentFlags(MotorDefs *mtrDefs, bool redAlliance){
-
 }
 
 void flipperLowFlag(MotorDefs *mtrDefs){
