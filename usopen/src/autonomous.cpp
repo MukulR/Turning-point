@@ -238,9 +238,6 @@ void backAuton(MotorDefs *mtrDefs, bool redAlliance){
 	}
 	//hit the fence
 	driveWithCoast(mtrDefs, 1000, -30);
-	while(cataLoadTask.get_state() == pros::E_TASK_STATE_RUNNING){
-		pros::Task::delay(5);
-	}
 	mtrDefs->intake_mtr->move(127);
 	smoothDrive(mtrDefs, 1000, 127, 1);
 	// Align and shoot opponent's flag
@@ -261,9 +258,10 @@ void backAuton(MotorDefs *mtrDefs, bool redAlliance){
 	if(redAlliance){
 		turnRobot(mtrDefs, 30, false);
 	} else {
-		turnRobot(mtrDefs, 45, true);
+		turnRobot(mtrDefs, 30, true);
 	}
 	// Shoot opponent's flag
+	pros::Task::delay(500);
 	shootCatapult(mtrDefs);
 	pros::Task::delay(200);
 	// Turn to face the platform
@@ -301,7 +299,7 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	
 	// Move forward so that when we bring the flipper down it is well over the peg of the
 	// cap.
-	driveRobot(mtrDefs, 460, 80);
+	driveRobot(mtrDefs, 420, 80);
 
 	// Bring the flipper down
 	flipperMove(mtrDefs, 2500, 80, -1);
@@ -314,7 +312,7 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	// Now drive back a bit so that cap bends towards the robot so that balls
 	// fall into intake
 	if(redAlliance){
-		driveRobot(mtrDefs, -300, 100);
+		driveRobot(mtrDefs, -200, 100);
 	} else{
 		driveRobot(mtrDefs, -200, 100);
 	}
@@ -324,7 +322,7 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 	pros::Task::delay(200);
 
 	// Bring flipper down so that when we move forward cap doesn't get stuck in intake
-	driveRobot(mtrDefs, -100, 80);
+	driveRobot(mtrDefs, -125, 80);
 	flipperMove(mtrDefs, 3320, 127, -1);
 	
 	// Move forward a bit so that we are within range of top two middle flags
@@ -336,7 +334,7 @@ void pickupBallsFromCapFlipAndShoot(MotorDefs *mtrDefs, bool redAlliance){
 
 	// Turn to make sure we can hit the flags
 	if(redAlliance){
-		turnRobot(mtrDefs, 8, false);
+		turnRobot(mtrDefs, 12, false);
 	} else{
 		turnRobot(mtrDefs, 12, false);	
 	}//turn right for blue as catapult is on the left side already 
