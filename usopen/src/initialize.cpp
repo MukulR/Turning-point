@@ -2,9 +2,6 @@
 #include "motordefs.hpp"
 #include "autonselection.hpp"
 
-
-#define NUMAUTONS 7
-
 /**
  * Autonomous name documentation:
  * P-O-M: Pickup ball from platform, shoot our flags, 
@@ -14,13 +11,13 @@
  * 			pick up two balls from cap, shoot our flags.
  */
  
-static const char *btnm_map[] = {"P-O-M", "P-M-O", "U-O-M", "U-M-O", "\n",
+static const char *btnm_map[] = {"P-O-M", "U-O-M", "P-M-O", "U-M-O", "\n",
                                  "SM-U-PRK", "ST-U-PRK", "S-2BF-PRK", ""};
-static const char *auton_names[] = {"P-O-M", "P-M-O", "U-O-M", "U-M-O",
+static const char *auton_names[] = {"P-O-M", "U-O-M", "P-M-O", "U-M-O",
                                  	  "SM-U-PRK", "ST-U-PRK", "S-2BF-PRK"};
 static const char *alliance_map[] = {"Red", "Blue", ""};
 
-int autonSelected;
+int autonSelected = 3;  // by default no auton
 bool redAlliance = false;
 
 static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
