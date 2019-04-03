@@ -16,6 +16,7 @@ class MotorDefs {
 
         MotorDefs();
         ~MotorDefs();
+        void initPIDVals();
 };
 
 
