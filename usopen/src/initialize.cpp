@@ -7,14 +7,15 @@
  * P-O-M: Pickup ball from platform, shoot our flags, 
  * 			pickup two balls from cap, shoot middle pole flags.
  * 
- * P-M-O: Pickup ball from platform, shoot middle pole flags,
- * 			pick up two balls from cap, shoot our flags.
+ * U-O-M: Pickup ball from under the cap, shoot our flags,
+ * 			pickup two balls from cap, shoot middle pole flags.
+ * 
+ * Back: Shoot middle top flag using preload, pick up ball from under the cap,
+ *          shoot opponent's top flag, climb on platform
  */
  
-static const char *btnm_map[] = {"P-O-M", "U-O-M", "P-M-O", "U-M-O", "\n",
-                                 "SM-U-PRK", "ST-U-PRK", "S-2BF-PRK", ""};
-static const char *auton_names[] = {"P-O-M", "U-O-M", "P-M-O", "U-M-O",
-                                 	  "SM-U-PRK", "ST-U-PRK", "S-2BF-PRK"};
+static const char *btnm_map[] = {"P-O-M", "U-O-M", "Back", "\n", ""};
+static const char *auton_names[] = {"P-O-M", "U-O-M", "Back"};
 static const char *alliance_map[] = {"Red", "Blue", ""};
 
 int autonSelected = 3;  // by default no auton
@@ -77,7 +78,7 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {
-	lv_theme_alien_init(190, NULL);
+	lv_theme_alien_init(10, NULL);
 	lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);
 	lv_label_set_text(title, "Auton Selection");
 	lv_obj_align(title, NULL, LV_ALIGN_IN_TOP_MID, 0, 10);

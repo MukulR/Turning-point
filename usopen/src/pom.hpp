@@ -16,8 +16,6 @@ class POM{
         ~POM();
         void runAuton();
         void getPlatformBallAndAlignAgainstFence();
-    private:
-
 };
 
 #endif //_POM_H_
