@@ -113,7 +113,7 @@ void flipper(void *param){
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 				pros::Task::delay(10);
 			}
-			mtrDefs.flipper_mtr->move(-2);
+			mtrDefs.flipper_mtr->move(5);
 		}
 		pros::Task::delay(10);
 	}

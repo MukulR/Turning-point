@@ -15,6 +15,10 @@ class Back{
         Back(MotorDefs *mtrDefs, RobotDriver *rd, bool ra, Commons *ca);
         ~Back();
         void runAuton();
+    private:
+        void pickupBallAndShootOpponentFlag();
+        void park();
+        void shootMiddleFlag();
 };
 
 #endif //_BACK_H_

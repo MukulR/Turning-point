@@ -78,7 +78,7 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {
-	lv_theme_alien_init(10, NULL);
+	lv_theme_alien_init(0, NULL);
 	lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);
 	lv_label_set_text(title, "Auton Selection");
 	lv_obj_align(title, NULL, LV_ALIGN_IN_TOP_MID, 0, 10);

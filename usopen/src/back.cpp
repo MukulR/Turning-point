@@ -12,16 +12,18 @@ Back::Back(MotorDefs *md, RobotDriver *rd, bool ra, Commons *ca){
 
 Back::~Back() {}
 
-
-void Back::runAuton(){
+void Back::shootMiddleFlag(){
 	// Hold power on flipper so that it doesn't come down
-	mtrDefs->flipper_mtr->move(5);
+	mtrDefs->flipper_mtr->move(10);
 
 	// Lets wait for 5 seconds
 	pros::Task::delay(5000);
 
 	// Shoot middle pole top flag
 	commonAutons->shootCatapult();
+}
+
+void Back::pickupBallAndShootOpponentFlag(){
 	// Align against fence and pick up ball from underneath the cap
 	pros::Task::delay(100);
 	pros::Task cataLoadTask(Commons::catapultLoad, mtrDefs);
@@ -29,12 +31,21 @@ void Back::runAuton(){
 	if(redAlliance){
 		robotDriver->turnRobot(45, false);
 	} else {
-		robotDriver->turnRobot(45, true);
+		robotDriver->turnRobot(55, true);
 	}
 	//hit the fence
 	robotDriver->driveWithCoast(1000, -30);
+	//turn on intake and go forward
 	mtrDefs->intake_mtr->move(127);
 	robotDriver->smoothDrive(1000, 127, 1);
+	//come back slightly to be centered with the platform
+	// the distance is different as the platform is closer to the blue side by one tile tick
+	if(redAlliance){
+		robotDriver->driveRobot(-5, 50);
+	} else{
+		robotDriver->driveRobot(-55, 50);
+	}
+	
 	// Align and shoot opponent's flag
 	pros::Task::delay(100);
 	//turn to face platform
@@ -44,12 +55,12 @@ void Back::runAuton(){
 		robotDriver->turnRobot(90, false);
 	}
 	//align with platform
-	robotDriver->driveWithCoast(700, 30);
+	robotDriver->driveWithCoast(700, 50);
 	pros::Task::delay(200);
 	// Drive back and turn to face opponent's flag
 	robotDriver->driveRobot(-150, 50);
 	if(redAlliance){
-		robotDriver->turnRobot(30, false);
+		robotDriver->turnRobot(32, false);
 	} else {
 		robotDriver->turnRobot(30, true);
 	}
@@ -57,14 +68,28 @@ void Back::runAuton(){
 	pros::Task::delay(500);
 	commonAutons->shootCatapult();
 	pros::Task::delay(200);
+}
+
+void Back::park(){
 	// Turn to face the platform
 	if(redAlliance){
-		robotDriver->turnRobot(30, true);
+		robotDriver->turnRobot(32, true);
 	} else {
 		robotDriver->turnRobot(30, false);
 	}
 	// Let the robot stabilize before shooting
 	pros::Task::delay(1000);
 	// Drive and park on platform
-	robotDriver->driveWithCoast(1000, 100);
+	robotDriver->driveWithCoast(1300, 100);
+	mtrDefs->right_mtr_f->move_relative(0, 200);
+	mtrDefs->middle_mtr->move_relative(0, 200);
+	mtrDefs->right_mtr_b->move_relative(0, 200);
+	mtrDefs->left_mtr_f->move_relative(0, 200);
+	mtrDefs->left_mtr_b->move_relative(0, 200);
+}
+
+void Back::runAuton(){
+	shootMiddleFlag();
+	pickupBallAndShootOpponentFlag();
+	park();
 }

@@ -55,7 +55,7 @@ void Commons::pickupBallsFromCapFlipAndShoot() {
 
 	//align to the cap 
 	if(redAlliance){
-		robotDriver->turnRobot(43, false);
+		robotDriver->turnRobot(40, false);
 	} else {
 		robotDriver->turnRobot(45, true);
 	}
@@ -99,7 +99,7 @@ void Commons::pickupBallsFromCapFlipAndShoot() {
 	if(redAlliance){
 		robotDriver->turnRobot(10, false);
 	} else{
-		robotDriver->turnRobot(10, false);	
+		robotDriver->turnRobot(9, false);	
 	}//turn right for blue as catapult is on the left side already 
 
 
@@ -114,7 +114,7 @@ void Commons::alignAndShootOurFlags() {
     if(redAlliance){
 		robotDriver->driveRobot(225, 50);
 	} else{
-		robotDriver->driveRobot(75, 50);
+		robotDriver->driveRobot(150, 50);
 	}
 	pros::Task::delay(100);
 	if(redAlliance){
