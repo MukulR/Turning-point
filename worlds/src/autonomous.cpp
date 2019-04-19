@@ -6,10 +6,7 @@
 #include "robot_driver.hpp"
 #include "uom.hpp"
 
-/*
-pros::ADIDigitalIn bumper_auton('C');
-pros::ADIPotentiometer potentiometer('H');
-*/
+
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -40,7 +37,7 @@ void autonomous() {
 			break;
 		case 1:
 			{
-				UOM uomAuton(&mtrDefs, &robotDriver, redAlliance, &commonAutons);
+				UOM uomAuton(&mtrDefs, &robotDriver, redAlliance, &commonAutons, gyro);
 				uomAuton.runAuton();
 			}
 			break;

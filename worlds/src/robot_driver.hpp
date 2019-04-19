@@ -16,6 +16,7 @@ class RobotDriver {
     private:
         void waitForDriveCompletion();
         void waitForTurnCompletion();
+        void verifyTurns(MotorDefs *mtrDefs, int degrees, int direction);
 };
 
 

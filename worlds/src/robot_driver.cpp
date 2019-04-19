@@ -3,8 +3,6 @@
 
 const float TURN_SCALE_FACTOR = 2.9444444;
 
-pros::ADIGyro gyro('C');
-
 RobotDriver::RobotDriver(MotorDefs *motorDefs) {
     mtrDefs = motorDefs;
 }
@@ -54,19 +52,44 @@ void RobotDriver::driveWithCoast(int time, int power){
 	mtrDefs->middle_mtr->move(0);
 }
 
+/*
+void RobotDriver::verifyTurns(MotorDefs *mtrDefs, int degrees, int direction){	
+	printf("Gyro val: %d\n", gyro.get_value());
+	while(abs(gyro.get_value()) > abs(degrees * 10)){
+		mtrDefs->left_mtr_f->move(direction * 65);	
+		mtrDefs->left_mtr_b->move(direction * 65);  
+		mtrDefs->right_mtr_f->move(direction * -65);
+		mtrDefs->right_mtr_b->move(direction * -65);
+		printf("Gyro valu: %d\n", gyro.get_value());
+	}
+
+	while(abs(gyro.get_value()) < abs(degrees * 10)){
+		mtrDefs->left_mtr_f->move(direction * 65);	
+		mtrDefs->left_mtr_b->move(direction * 65);
+		mtrDefs->right_mtr_f->move(direction * -65);
+		mtrDefs->right_mtr_b->move(direction * -65);
+		printf("Gyro valeu: %d\n", gyro.get_value());
+	}
+
+	//make sure drive doesnt coast after verifying turn with gyroscope
+	mtrDefs->left_mtr_f->move_relative(0, 100);	
+	mtrDefs->left_mtr_b->move_relative(0, 100);
+	mtrDefs->right_mtr_f->move_relative(0, 100);
+	mtrDefs->right_mtr_b->move_relative(0, 100);
+}*/
+
 void RobotDriver::turnRobot(int unscaledDegs, bool left){
 	float degrees = unscaledDegs * TURN_SCALE_FACTOR;
 	mtrDefs->left_mtr_f->move(0);	
 	mtrDefs->left_mtr_b->move(0);
 	mtrDefs->right_mtr_f->move(0);
 	mtrDefs->right_mtr_b->move(0);
-	gyro.reset();	
+
 	if(left){
 		mtrDefs->left_mtr_f->move_relative(-degrees, 65);	
 		mtrDefs->left_mtr_b->move_relative(-degrees, 65);
 		mtrDefs->right_mtr_f->move_relative(degrees, 65);
 		mtrDefs->right_mtr_b->move_relative(degrees, 65);
-		gyro.get_value();
 	} else {
 		mtrDefs->left_mtr_f->move_relative(degrees, 65);	
 		mtrDefs->left_mtr_b->move_relative(degrees, 65);

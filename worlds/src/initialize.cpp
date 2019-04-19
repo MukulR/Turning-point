@@ -20,6 +20,7 @@ static const char *alliance_map[] = {"Red", "Blue", ""};
 
 int autonSelected = 3;  // by default no auton
 bool redAlliance = false;
+pros::ADIGyro *gyro;
 
 static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
    printf("btnm_action Called \n");
@@ -78,6 +79,7 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {
+   gyro = new pros::ADIGyro('C', 1);
 	lv_theme_alien_init(0, NULL);
 	lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);
 	lv_label_set_text(title, "Auton Selection");
