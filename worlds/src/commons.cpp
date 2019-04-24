@@ -32,6 +32,24 @@ void Commons::shootCatapult() {
 	}
 }
 
+void Commons::flipperUp(void *param){
+	MotorDefs *mtrDefs = (MotorDefs*)param;
+	mtrDefs->flipper_mtr->move(50);
+	while(potentiometer.get_value() > 300){
+		pros::Task::delay(5);
+	} 
+	mtrDefs->flipper_mtr->move_relative(0, 200);
+}
+
+void Commons::flipperCapPos(void *param){
+	MotorDefs *mtrDefs = (MotorDefs*)param;
+	mtrDefs->flipper_mtr->move(-50);
+	while(potentiometer.get_value() < 2130){
+		pros::Task::delay(5);
+	}
+	mtrDefs->flipper_mtr->move_relative(0, 200);
+}
+
 void Commons::flipperMove(int potValue, int power, int direction){
 	mtrDefs->flipper_mtr->move(direction * power);
 	if(direction == 1){ // Bring flipper up
@@ -85,7 +103,6 @@ void Commons::pickupBallsFromCapFlipAndShoot() {
 	flipperMove(3220, 127, -1);
 	
 	// Move forward a bit so that we are within range of top two middle flags
-
 	robotDriver->driveRobot(525, 80);
 
 	// Bring flipper back up with the hope that we flip the cap
@@ -93,7 +110,7 @@ void Commons::pickupBallsFromCapFlipAndShoot() {
 
 	// Turn to make sure we can hit the flags
 	if(redAlliance){
-		robotDriver->turnRobot(16, false);
+		robotDriver->turnRobot(13, false);
 	} else{
 		robotDriver->turnRobot(13, false);	
 	}//turn right for blue as catapult is on the left side already 

@@ -18,9 +18,8 @@ UOM::UOM(MotorDefs *md, RobotDriver *rd, bool ra, Commons *ca, pros::ADIGyro *gy
 UOM::~UOM() {}
 
 void UOM::getBallFromUnderCapAndAlignAgainstFence() {
-    // Hold the flipper up.
-    mtrDefs->flipper_mtr->move(5);
-
+    // bring the flipper to cap position
+    pros::Task flipperTask(Commons::flipperCapPos, mtrDefs);
 	// Drive to the ball under the cap with the intake on
     mtrDefs->intake_mtr->move(127);
 	robotDriver->smoothDrive(950, 120, 1);
@@ -28,6 +27,8 @@ void UOM::getBallFromUnderCapAndAlignAgainstFence() {
 
     // Drive back and align against fence
     robotDriver->smoothDrive(1000, 120, -1);
+    //bring flipper back up
+    pros::Task flipperUpTask(Commons::flipperUp, mtrDefs);
     robotDriver->driveWithCoast(750, -30);
 }
 
@@ -36,21 +37,8 @@ void testGyro(){
 }
 
 void UOM::runAuton(){
-    printf("Gyro: %lf\n", gyro->get_value());
-    while(abs(gyro->get_value()) <= 900){
-        printf("Gyro in loop: %lf\n", gyro->get_value());
-        mtrDefs->left_mtr_f->move(50);
-        mtrDefs->left_mtr_b->move(50);
-        mtrDefs->right_mtr_f->move(-50);
-        mtrDefs->right_mtr_f->move(-50);
-    }
-    mtrDefs->left_mtr_f->move(0);
-    mtrDefs->left_mtr_b->move(0);
-    mtrDefs->right_mtr_f->move(0);
-    mtrDefs->right_mtr_f->move(0);
-    /*
 	getBallFromUnderCapAndAlignAgainstFence();
 	commonAutons->alignAndShootOurFlags();
 	//toggleLowFlag(mtrDefs, redAlliance);
-	commonAutons->pickupBallsFromCapFlipAndShoot();*/
+	commonAutons->pickupBallsFromCapFlipAndShoot();
 }

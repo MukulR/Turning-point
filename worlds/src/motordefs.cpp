@@ -18,7 +18,7 @@ MotorDefs::MotorDefs() {
     intake_mtr = new pros::Motor(1, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
     flipper_mtr = new pros::Motor(4, pros::E_MOTOR_GEARSET_36, true, pros::E_MOTOR_ENCODER_DEGREES);
     */
-   left_mtr_f = new pros::Motor(15, pros::E_MOTOR_GEARSET_18, false);
+    left_mtr_f = new pros::Motor(15, pros::E_MOTOR_GEARSET_18, false);
     right_mtr_f = new pros::Motor(12, pros::E_MOTOR_GEARSET_18, true);
     left_mtr_b = new pros::Motor(8, pros::E_MOTOR_GEARSET_18, false);
     right_mtr_b = new pros::Motor(16, pros::E_MOTOR_GEARSET_18, true);

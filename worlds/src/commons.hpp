@@ -14,7 +14,8 @@ class Commons {
         ~Commons();
     public:
         static void catapultLoad(void *param);
-        
+        static void flipperCapPos(void *param);
+        static void flipperUp(void *param);
         void flipperMove(int potValue, int power, int direction);
         void shootCatapult();
         void pickupBallsFromCapFlipAndShoot();

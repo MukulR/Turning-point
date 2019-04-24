@@ -26,3 +26,4 @@ usopen/compile_commands.json
 worlds/bin/*
 worlds/firmware/*
 worlds/compile_commands.json
+.vscode/*

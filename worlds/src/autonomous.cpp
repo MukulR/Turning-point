@@ -25,7 +25,7 @@ void noAuton();
 void autonomous() {
 	MotorDefs mtrDefs;
 	mtrDefs.initPIDVals();
-	RobotDriver robotDriver(&mtrDefs);
+	RobotDriver robotDriver(&mtrDefs, gyro);
 	Commons commonAutons(&mtrDefs, &robotDriver, redAlliance);
 	
 	switch (autonSelected) {

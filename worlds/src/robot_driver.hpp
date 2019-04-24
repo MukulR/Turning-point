@@ -3,11 +3,16 @@
 
 class MotorDefs;
 
+namespace pros{
+    class ADIGyro;
+}
+
 class RobotDriver {
     private:
         MotorDefs *mtrDefs;
+        pros::ADIGyro *gyro;
     public:
-        RobotDriver(MotorDefs *motorDefs);
+        RobotDriver(MotorDefs *motorDefs, pros::ADIGyro *gy);
         ~RobotDriver();
         void driveRobot(double degrees, std::int32_t velocity);
         void driveWithCoast(int time, int power);

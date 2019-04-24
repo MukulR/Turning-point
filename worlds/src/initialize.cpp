@@ -80,6 +80,9 @@ void disabled() {}
  */
 void competition_initialize() {
    gyro = new pros::ADIGyro('C', 1);
+   gyro->reset();
+   std::cout << "Initialize(): Gyro val: " << gyro->get_value() << "\n";
+   
 	lv_theme_alien_init(0, NULL);
 	lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);
 	lv_label_set_text(title, "Auton Selection");
