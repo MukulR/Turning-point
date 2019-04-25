@@ -16,8 +16,8 @@ void Back::shootMiddleFlag(){
 	// Hold power on flipper so that it doesn't come down
 	mtrDefs->flipper_mtr->move(10);
 
-	// Lets wait for 5 seconds
-	pros::Task::delay(1000);
+	// Lets wait for 1 seconds
+	pros::Task::delay(800);
 
 	// Shoot middle pole top flag
 	commonAutons->shootCatapult();
@@ -30,9 +30,9 @@ void Back::pickupBallAndShootOpponentFlag(){
 	pros::Task::delay(100);
 	pros::Task cataLoadTask(Commons::catapultLoad, mtrDefs);
 	pros::Task flipperTask(Commons::flipperCapPos, mtrDefs);
-	robotDriver->driveRobot(-75, 30);
+	robotDriver->driveRobot(-100, 30);
 	if(redAlliance){
-		robotDriver->turnRobot(45, false);
+		robotDriver->turnRobot(52, false);
 	} else {
 		robotDriver->turnRobot(55, true);
 	}
@@ -41,12 +41,12 @@ void Back::pickupBallAndShootOpponentFlag(){
 	//turn on intake and go forward
 	mtrDefs->intake_mtr->move(127);
 	robotDriver->smoothDrive(800, 127, 1);
-	robotDriver->driveWithCoast(500, 80);
+	robotDriver->driveWithCoast(400, 80);
 	//come back slightly to be centered with the platform
 	// the distance is different as the platform is closer to the blue side by one tile tick
 	pros::Task flipperUpTask(Commons::flipperUp, mtrDefs);
 	if(redAlliance){
-		robotDriver->driveRobot(-30, 50);
+		robotDriver->driveRobot(-75, 50);
 	} else{
 		robotDriver->driveRobot(-55, 50);
 	}
