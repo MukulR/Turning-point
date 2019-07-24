@@ -48,6 +48,13 @@ void catapult(void* param){
 			mtrDefs.catapult_mtr->move(127);
 			pros::Task::delay(600);
 			while(bumper.get_value()){
+				if(!bumper.get_value()){
+					pros::Task::delay(40);
+					if(!bumper.get_value()){
+						mtrDefs.catapult_mtr->move(0);
+						break;
+					}
+				}
 				if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
 					break;
 				}

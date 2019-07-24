@@ -19,17 +19,17 @@ UOM::~UOM() {}
 
 void UOM::getBallFromUnderCapAndAlignAgainstFence() {
     // bring the flipper to cap position
-    pros::Task flipperTask(Commons::flipperCapPos, mtrDefs);
+    //pros::Task flipperTask(Commons::flipperCapPos, mtrDefs);
 	// Drive to the ball under the cap with the intake on
     mtrDefs->intake_mtr->move(127);
-	robotDriver->smoothDrive(950, 120, 1);
+    robotDriver->driveWithCoast(450, 127);
     pros::Task::delay(500);
 
     // Drive back and align against fence
     robotDriver->smoothDrive(1000, 120, -1);
     //bring flipper back up
-    pros::Task flipperUpTask(Commons::flipperUp, mtrDefs);
-    robotDriver->driveWithCoast(750, -30);
+    //pros::Task flipperUpTask(Commons::flipperUp, mtrDefs);
+    robotDriver->driveWithCoast(950, -30);
 }
 
 void testGyro(){
